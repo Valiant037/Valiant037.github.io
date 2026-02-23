@@ -743,7 +743,7 @@ nav#menu #menu-nav li a:hover {
 
 .item-thumbs:hover a+img,
 .item-thumbs.active a+img {
-	transform: scale(1.08);
+	transform: scale(1.15);
 }
 
 
@@ -752,14 +752,13 @@ nav#menu #menu-nav li a:hover {
 	display: block;
 	width: 100%;
 	height: 100%;
+	z-index: 1;
 	opacity: 0;
 	filter: alpha(opacity=0);
-	-webkit-transition: all 450ms ease-out 0s;
-	-moz-transition: all 450ms ease-out 0s;
-	-o-transition: all 450ms ease-out 0s;
-	transition: all 450ms ease-out 0s;
-	-webkit-transform: scale3d(1.5, 1.5, 1);
-	transform: scale3d(1.5, 1.5, 1);
+	-webkit-transition: opacity 450ms ease-out 0s;
+	-moz-transition: opacity 450ms ease-out 0s;
+	-o-transition: opacity 450ms ease-out 0s;
+	transition: opacity 450ms ease-out 0s;
 	/*		  
 	-webkit-transform: rotateY(180deg) scale(0.5,0.5);
 	   -moz-transform: rotateY(180deg) scale(0.5,0.5);
@@ -773,8 +772,6 @@ nav#menu #menu-nav li a:hover {
 .item-thumbs.active .hover-wrap {
 	opacity: 1;
 	filter: alpha(opacity=100);
-	-webkit-transform: scale3d(1, 1, 1);
-	transform: scale3d(1, 1, 1);
 	/*	
 	-webkit-transform: rotateY(0deg) scale(1,1);
 	   -moz-transform: rotateY(0deg) scale(1,1);
@@ -788,7 +785,7 @@ nav#menu #menu-nav li a:hover {
 	position: absolute;
 	width: 100%;
 	height: 100%;
-	background: transparent;
+	background: rgba(10, 10, 10, 0.7);
 	box-sizing: border-box;
 	border-bottom: 5px solid #dbcf7f;
 	opacity: 0;
@@ -802,7 +799,27 @@ nav#menu #menu-nav li a:hover {
 }
 
 .item-thumbs .hover-wrap .overlay-img-thumb {
-	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: #FFFFFF;
+	font-size: 0;
+	line-height: 1em;
+	opacity: 1;
+	filter: alpha(opacity=100);
+}
+
+.item-thumbs .hover-wrap .overlay-img-thumb::after {
+	content: 'VIEW PROJECT';
+	font-family: 'futura_lightregular', sans-serif;
+	font-size: 12px;
+	letter-spacing: 3px;
+	text-transform: uppercase;
+	color: #FFFFFF;
+	padding: 15px 30px;
+	border: 1px solid #FFFFFF;
+	white-space: nowrap;
 }
 
 /*
@@ -1524,6 +1541,7 @@ footer .credits {
 	min-height: 100%;
 	background: url('../img/bg2.png') center;
 	border-bottom: 2px solid #dbcf7f;
+	overflow: hidden;
 }
 
 .intro-page {
