@@ -1553,7 +1553,8 @@ footer .credits {
 .intro-page {
 	text-align: center;
 	margin-bottom: 0;
-	z-index: 1;
+	z-index: 5;
+	position: relative;
 }
 
 .scroll-indicator {
