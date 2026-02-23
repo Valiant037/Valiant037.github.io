@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIEN-HUNG CHANG | Art Director Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Navigation -->
+    <nav class="navigation">
+        <div class="nav-container">
+            <a href="#" class="logo">TC</a>
+            <ul class="nav-links">
+                <li><a href="#work">Work</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <ul>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="reveal-text">
+                    <span class="line">TIEN-HUNG</span>
+                    <span class="line">CHANG</span>
+                </h1>
+                <p class="role reveal-text">
+                    <span class="line">Art Director</span>
+                    <span class="line">& Visual Artist</span>
+                </p>
+            </div>
+            <div class="scroll-indicator">
+                <span>Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </div>
+        <div class="hero-bg">
+            <div class="gradient-orb"></div>
+            <div class="gradient-orb-2"></div>
+        </div>
+    </section>
+
+    <!-- Work Section -->
+    <section id="work" class="work-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Portfolio</span>
+                <h2 class="section-title">Selected Works</h2>
+                <p class="section-description">A curated collection of creative projects spanning games, VR/MR experiences, exhibitions, and visual design.</p>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="filter-nav">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="game">Game</button>
+                <button class="filter-btn" data-filter="exhibition">Exhibition</button>
+                <button class="filter-btn" data-filter="mr">VR / MR</button>
+                <button class="filter-btn" data-filter="design">Design</button>
+                <button class="filter-btn" data-filter="other">Other</button>
+            </div>
+
+            <!-- Project Gallery -->
+            <div class="gallery">
+                <div class="gallery-grid">
+                    <!-- Project 1: Echoes of Formosa -->
+                    <article class="project-card" data-category="game" data-year="2024" data-role="Game Director, Art Director">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop" alt="Echoes of Formosa" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2024</span>
+                            <h3 class="project-title">Echoes of Formosa</h3>
+                            <p class="project-category">Game</p>
+                            <p class="project-description">Story-driven action game set in 1640s Taiwan, exploring the perilous land of Zeelandia.</p>
+                            <a href="https://store.steampowered.com/app/3216860/_Echoes_of_Formosa_Agent_Reborn" target="_blank" class="project-link">View on Steam →</a>
+                        </div>
+                    </article>
+
+                    <!-- Project 2: Seahuan VR -->
+                    <article class="project-card" data-category="mr" data-year="2024" data-role="Director, Art Director">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=600&h=400&fit=crop" alt="Seahuan VR" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2024</span>
+                            <h3 class="project-title">Seahuan: The Sino-French War</h3>
+                            <p class="project-category">VR Short Film</p>
+                            <p class="project-description">Immersive VR short film following A-Huea into the Sino-French War.</p>
+                            <a href="https://www.moc.gov.tw/News_Content.aspx?n=105&s=232662" target="_blank" class="project-link">Learn More →</a>
+                        </div>
+                    </article>
+
+                    <!-- Project 3: Digiwave -->
+                    <article class="project-card" data-category="exhibition" data-year="2023" data-role="Art Director">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&h=400&fit=crop" alt="Digiwave" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2023</span>
+                            <h3 class="project-title">Digiwave: Latent Space</h3>
+                            <p class="project-category">Interactive Exhibition</p>
+                            <p class="project-description">Interactive exhibition exploring generative AI and neural networks.</p>
+                            <a href="https://youtu.be/bsjPtS0jTQ8?si=-Q3rlLuHU1muR3J5&t=84" target="_blank" class="project-link">Watch Video →</a>
+                        </div>
+                    </article>
+
+                    <!-- Project 4: CTBC -->
+                    <article class="project-card" data-category="exhibition" data-year="2023">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=400&fit=crop" alt="CTBC Exhibition" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2023</span>
+                            <h3 class="project-title">CTBC: Banking Everywhere</h3>
+                            <p class="project-category">Interactive Exhibition</p>
+                            <p class="project-description">Interactive virtual banking experience for CTBC.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 5: Taipei Lantern Festival -->
+                    <article class="project-card" data-category="exhibition" data-year="2023">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=600&h=400&fit=crop" alt="Taipei Lantern Festival" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2023</span>
+                            <h3 class="project-title">Taipei Lantern Festival</h3>
+                            <p class="project-category">Exhibition</p>
+                            <p class="project-description">LED maze installation with seasonal and AI data-driven visuals.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 6: Formosan Harmony -->
+                    <article class="project-card" data-category="mr" data-year="2022">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1617802690992-15d93263d3a9?w=600&h=400&fit=crop" alt="Formosan Harmony" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2022</span>
+                            <h3 class="project-title">Formosan Harmony</h3>
+                            <p class="project-category">MR Experience</p>
+                            <p class="project-description">Moondream Reality interactive theater experience.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 7: ROG CITADEL XV -->
+                    <article class="project-card" data-category="game" data-year="2020" data-role="Game Director, Art Director">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=400&fit=crop" alt="ROG CITADEL XV" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2020</span>
+                            <h3 class="project-title">ROG CITADEL XV</h3>
+                            <p class="project-category">Game / Virtual Showroom</p>
+                            <p class="project-description">Hybrid virtual showroom and fast-paced FPS experience for ASUS ROG.</p>
+                            <a href="https://store.steampowered.com/app/1472250/ROG_CITADEL_XV" target="_blank" class="project-link">View on Steam →</a>
+                        </div>
+                    </article>
+
+                    <!-- Project 8: EVA Air VR -->
+                    <article class="project-card" data-category="mr" data-year="2018">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&h=400&fit=crop" alt="EVA Air VR" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2018</span>
+                            <h3 class="project-title">EVA AIR Dreamliner 787 VR</h3>
+                            <p class="project-category">VR Experience</p>
+                            <p class="project-description">Immersive premium flight showcase for EVA Air.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 9: Toyota VR -->
+                    <article class="project-card" data-category="mr" data-year="2019">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&h=400&fit=crop" alt="Toyota VR" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2019</span>
+                            <h3 class="project-title">Toyota Official Virtual Showroom</h3>
+                            <p class="project-category">VR Experience</p>
+                            <p class="project-description">Interactive PRIUS PHV experience in VR.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 10: FlyOver Canada -->
+                    <article class="project-card" data-category="design" data-year="2014">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop" alt="FlyOver Canada" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2014</span>
+                            <h3 class="project-title">FlyOver Canada: Soar with Santa</h3>
+                            <p class="project-category">Previz / Design</p>
+                            <p class="project-description">iRide previs for FlyOver Canada Christmas edition.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 11: Attack on Titan -->
+                    <article class="project-card" data-category="design" data-year="2014">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&h=400&fit=crop" alt="Attack on Titan" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2014</span>
+                            <h3 class="project-title">Attack on Titan: iRide</h3>
+                            <p class="project-category">Previz / Design</p>
+                            <p class="project-description">Theme park ride previs for Attack on Titan.</p>
+                        </div>
+                    </article>
+
+                    <!-- Project 12: Cell Factory -->
+                    <article class="project-card" data-category="mr" data-year="2017">
+                        <div class="project-image">
+                            <img src="https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=600&h=400&fit=crop" alt="Cell Factory" loading="lazy">
+                            <div class="project-overlay">
+                                <span class="view-project">View Project</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-year">2017</span>
+                            <h3 class="project-title">Cell Factory</h3>
+                            <p class="project-category">VR Educational Game</p>
+                            <p class="project-description">Educational VR game on cell anatomy.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image reveal">
+                    <div class="image-frame">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=600&fit=crop" alt="Tien-Hung Chang" loading="lazy">
+                        <div class="frame-accent"></div>
+                    </div>
+                </div>
+                <div class="about-content reveal">
+                    <span class="section-label">About</span>
+                    <h2 class="section-title">Creative Visionary</h2>
+                    <p class="about-intro">Tien-Hung Chang (Dean) is an Art Director with over 15 years of experience in interactive media, game development, and immersive experiences.</p>
+                    <p class="about-text">Currently serving as Art Director at Moonshine Studio, Dean leads a team of interactive artists and has directed multiple award-winning projects including games, VR/MR experiences, and large-scale interactive exhibitions.</p>
+
+                    <div class="skills-section">
+                        <h3>Expertise</h3>
+                        <div class="skills-grid">
+                            <span class="skill-tag">Art Direction</span>
+                            <span class="skill-tag">Game Development</span>
+                            <span class="skill-tag">VR/AR/MR Production</span>
+                            <span class="skill-tag">Visual Design</span>
+                            <span class="skill-tag">3D Modeling</span>
+                            <span class="skill-tag">Motion Capture</span>
+                            <span class="skill-tag">Generative AI</span>
+                            <span class="skill-tag">Team Leadership</span>
+                        </div>
+                    </div>
+
+                    <div class="awards-section">
+                        <h3>Recent Awards</h3>
+                        <ul class="awards-list">
+                            <li>2024 Unity UDAY Taiwan - First Place</li>
+                            <li>2023 MUSE Platinum Winner - Digiwave</li>
+                            <li>2022 MUSE Platinum Winner - Formosan Harmony</li>
+                            <li>2021 Red Dot Winner - ROG CITADEL XV</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="contact-content">
+                <span class="section-label">Contact</span>
+                <h2 class="section-title">Let's Create Together</h2>
+                <p class="contact-intro">Interested in collaborating or learning more about my work? Feel free to reach out.</p>
+
+                <div class="contact-info">
+                    <a href="/cdn-cgi/l/email-protection#cbafaeaaa5a4afaeaaa5a4f8fc8baca6aaa2a7e5a8a4a6" class="contact-link"><span class="__cf_email__" data-cfemail="f99d9c9897969d9c989796caceb99e94989095d79a9694">[email&#160;protected]</span></a>
+                    <a href="tel:+886972032029" class="contact-link">+886 972 032 029</a>
+                </div>
+
+                <div class="social-links">
+                    <a href="https://twitter.com/deanodeano37" target="_blank" class="social-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                        <span>Twitter</span>
+                    </a>
+                    <a href="https://www.facebook.com/dean.chang.1656" target="_blank" class="social-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/" target="_blank" class="social-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                        <span>LinkedIn</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="copyright">© 2025 Tien-Hung Chang. All rights reserved.</p>
+            <p class="passion">Passion for creativity</p>
+        </div>
+    </footer>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" aria-label="Close">&times;</button>
+        <div class="lightbox-content">
+            <img src="" alt="" class="lightbox-image">
+            <div class="lightbox-info">
+                <h3 class="lightbox-title"></h3>
+                <p class="lightbox-category"></p>
+                <p class="lightbox-description"></p>
+            </div>
+        </div>
+        <button class="lightbox-nav lightbox-prev" aria-label="Previous">←</button>
+        <button class="lightbox-nav lightbox-next" aria-label="Next">→</button>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="script.js"></script>
+
+<script>
+/**
+ * Iframe 元素高亮注入脚本
+ * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ *
+ * 使用方法：
+ * 1. 将此脚本添加到目标网站的 HTML 中
+ * 2. 或通过浏览器扩展、用户脚本等方式注入
+ */
+
+(function () {
+  "use strict";
+
+  // 检查是否在 iframe 中
+  if (window.self === window.top) {
+    return; // 不在 iframe 中，不执行
+  }
+
+  // 检查是否已经初始化过
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  // 创建高亮覆盖层
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  // 创建悬停高亮框（虚线边框）
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  // 创建选中节点的常驻高亮框（实线边框）
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  // 创建悬停标签显示
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  // 创建选中节点标签
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  // 存储当前选中的元素
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  // 更新选中元素的高亮显示
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    // 更新选中高亮框位置
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新选中标签位置和内容
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      // 优先检查唯一ID
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; // ID唯一，无需继续向上
+      }
+
+      // 生成类名选择器（取第一个有效类名）
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      // 生成位置索引（nth-child）
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    // 处理根元素
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  // 获取元素文本内容
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  // 获取元素属性信息
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  // 鼠标悬停事件处理
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免高亮 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 如果是已选中的元素，不显示悬停高亮
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    // 更新悬停高亮框位置
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新标签位置和内容
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    // 发送消息到父窗口
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 鼠标离开事件处理
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 点击事件处理
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免处理 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 检查是否是交互元素，这些元素需要保留默认行为
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    // 立即更新选中高亮
+    updateSelectedHighlight(target);
+
+    // 隐藏悬停高亮，因为现在是选中状态
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 监听来自父窗口的消息
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  // 启用高亮功能
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  // 禁用高亮功能
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
+    // 这样可以保留选中状态的显示
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+  }
+
+  // 完全禁用高亮功能（移除所有监听器）
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  // 添加事件监听
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  // 暴露全局函数供外部调用
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    // 通过消息发送开关控制
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  // 通知父窗口脚本已加载
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  // 清理函数
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+
+</script>
+</body>
+</html>
