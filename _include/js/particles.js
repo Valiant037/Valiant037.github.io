@@ -1,44 +1,65 @@
 /**
  * Three.js Grid Particles + GPU Stable Fluid with Water Refraction
- *
- * The fluid simulation produces a velocity field from mouse movement.
- * Instead of rendering colored dye, the velocity field drives a water-surface
- * refraction effect that distorts the background through the canvas.
- *
- * Layer 1: Fluid refraction overlay (distorts background like water ripples)
- * Layer 2: 5000+ grid particles displaced by mouse with spring physics
+ * + Live Settings UI Panel for real-time tweaking
  */
 (function () {
     'use strict';
 
     if (typeof THREE === 'undefined') return;
 
+    /* ---- Saved Color Presets ----
+     *
+     * "Rainbow" (original):
+     *   goldTint:  vec3(0.86, 0.81, 0.50)
+     *   highlight: vec3(1.0, 0.98, 0.92)
+     *   chromatic: vec3(vel.x, vel.y * 0.5, -vel.x) * 0.05
+     *   diffuse:   0.15
+     *   specular:  0.5
+     *   fresnel:   0.1
+     *   alpha max: 0.7
+     */
+
     /* ============================================================
-       CONFIGURATION
+       CONFIGURATION (live-editable via UI)
     ============================================================ */
     var CONFIG = {
         // Fluid
         fluidRes: 128,
-        viscosity: 0.3,
-        pressureIterations: 20,
-        splatRadius: 0.004,
-        splatForce: 3000,
+        splatRadius: 0.007,
+        splatForce: 3600,
+        velocityDissipation: 1,
+        pressureIterations: 5,
+
+        // Refraction colors (0-1)
+        tintR: 0.62, tintG: 0.46, tintB: 0,
+        highlightR: 0.14, highlightG: 0.06, highlightB: 0,
+        diffuseIntensity: 1,
+        specularIntensity: 2,
+        specularPower: 5,
+        fresnelIntensity: 1,
+        chromaticStrength: 0.02,
+        normalStrength: 1,
+        alphaMax: 1,
 
         // Particles
-        particleSize: 2.5,
-        mouseRadius: 150,
+        particleSize: 2,
+        mouseRadius: 260,
         mouseStrength: 60,
         springStiffness: 0.03,
         damping: 0.85,
 
-        // Colors
-        goldR: 219 / 255,
-        goldG: 207 / 255,
-        goldB: 127 / 255
+        // Center fade
+        fadeInner: 0.45,
+        fadeOuter: 1.05,
+        fadeMinAlpha: 0,
+        fadeMaxAlpha: 1,
+
+        // Show/hide UI
+        showUI: false
     };
 
     /* ============================================================
-       SHARED GLSL
+       GLSL
     ============================================================ */
     var GLSL_VERT = [
         'varying vec2 vUv;',
@@ -47,10 +68,6 @@
         '    gl_Position = vec4(position, 1.0);',
         '}'
     ].join('\n');
-
-    /* ============================================================
-       FLUID SHADERS
-    ============================================================ */
 
     var advectFrag = [
         'precision highp float;',
@@ -144,55 +161,51 @@
         '}'
     ].join('\n');
 
-    // Water refraction display — uses velocity field to create ripple distortion
+    // Refraction shader — all color/intensity values via uniforms
     var refractionFrag = [
         'precision highp float;',
         'varying vec2 vUv;',
         'uniform sampler2D uVelocity;',
         'uniform vec2 texelSize;',
+        'uniform vec3 uTint;',
+        'uniform vec3 uHighlight;',
+        'uniform float uDiffuse;',
+        'uniform float uSpecular;',
+        'uniform float uSpecPow;',
+        'uniform float uFresnel;',
+        'uniform float uChromatic;',
+        'uniform float uNormalStr;',
+        'uniform float uAlphaMax;',
         '',
         'void main() {',
         '    vec2 vel = texture2D(uVelocity, vUv).xy;',
         '    float speed = length(vel);',
         '',
-        '    // Compute "normals" from velocity gradient for surface lighting',
         '    float vL = length(texture2D(uVelocity, vUv - vec2(texelSize.x, 0.0)).xy);',
         '    float vR = length(texture2D(uVelocity, vUv + vec2(texelSize.x, 0.0)).xy);',
         '    float vB = length(texture2D(uVelocity, vUv - vec2(0.0, texelSize.y)).xy);',
         '    float vT = length(texture2D(uVelocity, vUv + vec2(0.0, texelSize.y)).xy);',
         '',
-        '    // Surface normal from height differences',
-        '    vec3 normal = normalize(vec3((vL - vR) * 8.0, (vB - vT) * 8.0, 1.0));',
+        '    vec3 normal = normalize(vec3((vL - vR) * uNormalStr, (vB - vT) * uNormalStr, 1.0));',
         '',
-        '    // Light direction (from top-left)',
         '    vec3 lightDir = normalize(vec3(0.3, 0.5, 1.0));',
         '    float diffuse = max(dot(normal, lightDir), 0.0);',
         '',
-        '    // Specular highlight (water glint)',
         '    vec3 viewDir = vec3(0.0, 0.0, 1.0);',
         '    vec3 halfDir = normalize(lightDir + viewDir);',
-        '    float spec = pow(max(dot(normal, halfDir), 0.0), 40.0);',
+        '    float spec = pow(max(dot(normal, halfDir), 0.0), uSpecPow);',
         '',
-        '    // Edge highlight (Fresnel-like)',
         '    float fresnel = 1.0 - abs(normal.z);',
         '    fresnel = pow(fresnel, 3.0);',
         '',
-        '    // Ripple intensity',
         '    float ripple = smoothstep(0.0, 0.5, speed);',
         '',
-        '    // Gold-tinted water refraction',
-        '    vec3 goldTint = vec3(0.86, 0.81, 0.50);',
-        '    vec3 highlight = vec3(1.0, 0.98, 0.92);',
-        '',
-        '    // Combine: subtle colored caustics + bright specular glints',
-        '    vec3 color = goldTint * diffuse * 0.15 + highlight * spec * 0.5;',
-        '    color += goldTint * fresnel * 0.1;',
-        '',
-        '    // Chromatic-like edge shift from velocity direction',
-        '    color += vec3(vel.x, vel.y * 0.5, -vel.x) * 0.05;',
+        '    vec3 color = uTint * diffuse * uDiffuse + uHighlight * spec * uSpecular;',
+        '    color += uTint * fresnel * uFresnel;',
+        '    color += vec3(vel.x, vel.y * 0.5, -vel.x) * uChromatic;',
         '',
         '    float alpha = ripple * 0.6 + spec * 0.4 + fresnel * 0.15;',
-        '    alpha = clamp(alpha, 0.0, 0.7);',
+        '    alpha = clamp(alpha, 0.0, uAlphaMax);',
         '',
         '    gl_FragColor = vec4(color, alpha);',
         '}'
@@ -208,7 +221,7 @@
     var velocity, pressure, divergenceFBO;
     var quadGeom, advectMat, divergenceMat, pressureMat, gradientMat, splatMat, clearMat, refractionMat;
 
-    var particleField, gridPositions, currentOffsets, velocities, particleCount;
+    var particleField, particleMat, gridPositions, currentOffsets, velocities, particleCount;
 
     var mouse = { x: -9999, y: -9999, prevX: -9999, prevY: -9999, dx: 0, dy: 0 };
     var mouseNorm = { x: 0, y: 0 };
@@ -219,32 +232,22 @@
     ============================================================ */
     function createDoubleFBO(w, h) {
         var params = {
-            minFilter: THREE.LinearFilter,
-            magFilter: THREE.LinearFilter,
-            format: THREE.RGBAFormat,
-            type: THREE.FloatType,
-            stencilBuffer: false,
-            depthBuffer: false
+            minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
+            format: THREE.RGBAFormat, type: THREE.FloatType,
+            stencilBuffer: false, depthBuffer: false
         };
         return {
             read: new THREE.WebGLRenderTarget(w, h, params),
             write: new THREE.WebGLRenderTarget(w, h, params),
-            swap: function () {
-                var tmp = this.read;
-                this.read = this.write;
-                this.write = tmp;
-            }
+            swap: function () { var t = this.read; this.read = this.write; this.write = t; }
         };
     }
 
     function createFBO(w, h) {
         return new THREE.WebGLRenderTarget(w, h, {
-            minFilter: THREE.LinearFilter,
-            magFilter: THREE.LinearFilter,
-            format: THREE.RGBAFormat,
-            type: THREE.FloatType,
-            stencilBuffer: false,
-            depthBuffer: false
+            minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
+            format: THREE.RGBAFormat, type: THREE.FloatType,
+            stencilBuffer: false, depthBuffer: false
         });
     }
 
@@ -263,27 +266,22 @@
 
         quadGeom = new THREE.PlaneGeometry(2, 2);
 
-        // Renderer
         renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
         renderer.setPixelRatio(1);
         renderer.setSize(W, H);
         renderer.setClearColor(0x000000, 0);
         renderer.autoClear = false;
         renderer.domElement.style.cssText =
-            'position:absolute;top:0;left:0;width:100%;height:100%;' +
-            'pointer-events:none;z-index:0;';
+            'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;';
         container.appendChild(renderer.domElement);
 
         fluidScene = new THREE.Scene();
         fluidCamera = new THREE.Camera();
 
         particleScene = new THREE.Scene();
-        particleCamera = new THREE.OrthographicCamera(
-            -W / 2, W / 2, H / 2, -H / 2, 1, 1000
-        );
+        particleCamera = new THREE.OrthographicCamera(-W / 2, W / 2, H / 2, -H / 2, 1, 1000);
         particleCamera.position.z = 500;
 
-        // FBOs
         var simRes = CONFIG.fluidRes;
         velocity = createDoubleFBO(simRes, simRes);
         pressure = createDoubleFBO(simRes, simRes);
@@ -291,52 +289,36 @@
 
         var texel = new THREE.Vector2(1.0 / simRes, 1.0 / simRes);
 
-        advectMat = createMaterial(advectFrag, {
-            uVelocity: { value: null },
-            uSource: { value: null },
-            dt: { value: 0.016 },
-            texelSize: { value: texel },
-            dissipation: { value: 0.97 }
+        advectMat = makeMat(advectFrag, {
+            uVelocity: { value: null }, uSource: { value: null },
+            dt: { value: 0.016 }, texelSize: { value: texel }, dissipation: { value: 0.97 }
         });
-
-        divergenceMat = createMaterial(divergenceFrag, {
-            uVelocity: { value: null },
-            texelSize: { value: texel }
+        divergenceMat = makeMat(divergenceFrag, { uVelocity: { value: null }, texelSize: { value: texel } });
+        pressureMat = makeMat(pressureFrag, { uPressure: { value: null }, uDivergence: { value: null }, texelSize: { value: texel } });
+        gradientMat = makeMat(gradientFrag, { uPressure: { value: null }, uVelocity: { value: null }, texelSize: { value: texel } });
+        splatMat = makeMat(splatFrag, {
+            uTarget: { value: null }, point: { value: new THREE.Vector2() },
+            color: { value: new THREE.Vector3() }, radius: { value: CONFIG.splatRadius }, aspectRatio: { value: W / H }
         });
+        clearMat = makeMat(clearFrag, { uTexture: { value: null }, value: { value: 0.8 } });
 
-        pressureMat = createMaterial(pressureFrag, {
-            uPressure: { value: null },
-            uDivergence: { value: null },
-            texelSize: { value: texel }
-        });
-
-        gradientMat = createMaterial(gradientFrag, {
-            uPressure: { value: null },
-            uVelocity: { value: null },
-            texelSize: { value: texel }
-        });
-
-        splatMat = createMaterial(splatFrag, {
-            uTarget: { value: null },
-            point: { value: new THREE.Vector2() },
-            color: { value: new THREE.Vector3() },
-            radius: { value: CONFIG.splatRadius },
-            aspectRatio: { value: W / H }
-        });
-
-        clearMat = createMaterial(clearFrag, {
-            uTexture: { value: null },
-            value: { value: 0.8 }
-        });
-
-        refractionMat = createMaterial(refractionFrag, {
-            uVelocity: { value: null },
-            texelSize: { value: texel }
+        refractionMat = makeMat(refractionFrag, {
+            uVelocity: { value: null }, texelSize: { value: texel },
+            uTint: { value: new THREE.Vector3(CONFIG.tintR, CONFIG.tintG, CONFIG.tintB) },
+            uHighlight: { value: new THREE.Vector3(CONFIG.highlightR, CONFIG.highlightG, CONFIG.highlightB) },
+            uDiffuse: { value: CONFIG.diffuseIntensity },
+            uSpecular: { value: CONFIG.specularIntensity },
+            uSpecPow: { value: CONFIG.specularPower },
+            uFresnel: { value: CONFIG.fresnelIntensity },
+            uChromatic: { value: CONFIG.chromaticStrength },
+            uNormalStr: { value: CONFIG.normalStrength },
+            uAlphaMax: { value: CONFIG.alphaMax }
         });
         refractionMat.transparent = true;
         refractionMat.blending = THREE.NormalBlending;
 
         createParticles(W, H);
+        // buildUI(); // Settings UI hidden — uncomment to re-enable
 
         container.addEventListener('mousemove', onMouseMove);
         container.addEventListener('mouseleave', onMouseLeave);
@@ -346,76 +328,54 @@
         animate();
     }
 
-    function createMaterial(frag, uniforms) {
-        return new THREE.ShaderMaterial({
-            vertexShader: GLSL_VERT,
-            fragmentShader: frag,
-            uniforms: uniforms,
-            depthTest: false,
-            depthWrite: false
-        });
+    function makeMat(frag, u) {
+        return new THREE.ShaderMaterial({ vertexShader: GLSL_VERT, fragmentShader: frag, uniforms: u, depthTest: false, depthWrite: false });
     }
 
     /* ============================================================
-       PARTICLE GRID
+       PARTICLES
     ============================================================ */
     function createParticles(W, H) {
         var spacing = Math.floor(Math.sqrt((W * H) / 5000));
         if (spacing < 10) spacing = 10;
-
         var cols = Math.ceil(W / spacing) + 1;
         var rows = Math.ceil(H / spacing) + 1;
         particleCount = cols * rows;
-
-        var offsetX = -W / 2;
-        var offsetY = -H / 2;
+        var oX = -W / 2, oY = -H / 2;
 
         gridPositions = new Float32Array(particleCount * 2);
         currentOffsets = new Float32Array(particleCount * 2);
         velocities = new Float32Array(particleCount * 2);
-
-        var positions = new Float32Array(particleCount * 3);
-        var colors = new Float32Array(particleCount * 3);
-        var sizes = new Float32Array(particleCount);
+        var pos = new Float32Array(particleCount * 3);
+        var col = new Float32Array(particleCount * 3);
+        var siz = new Float32Array(particleCount);
 
         var idx = 0;
-        for (var row = 0; row < rows; row++) {
-            for (var col = 0; col < cols; col++) {
-                var px = col * spacing + offsetX;
-                var py = row * spacing + offsetY;
-
-                gridPositions[idx * 2] = px;
-                gridPositions[idx * 2 + 1] = py;
-
-                positions[idx * 3] = px;
-                positions[idx * 3 + 1] = -py;
-                positions[idx * 3 + 2] = 0;
-
-                var variation = 0.85 + Math.random() * 0.3;
-                if (Math.random() > 0.85) {
-                    colors[idx * 3] = 0.9 + Math.random() * 0.1;
-                    colors[idx * 3 + 1] = 0.9 + Math.random() * 0.1;
-                    colors[idx * 3 + 2] = 0.85 + Math.random() * 0.15;
-                } else {
-                    colors[idx * 3] = CONFIG.goldR * variation;
-                    colors[idx * 3 + 1] = CONFIG.goldG * variation;
-                    colors[idx * 3 + 2] = CONFIG.goldB * variation;
-                }
-
-                sizes[idx] = CONFIG.particleSize * (0.7 + Math.random() * 0.6);
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var px = c * spacing + oX, py = r * spacing + oY;
+                gridPositions[idx * 2] = px; gridPositions[idx * 2 + 1] = py;
+                pos[idx * 3] = px; pos[idx * 3 + 1] = -py; pos[idx * 3 + 2] = 0;
+                // All white
+                col[idx * 3] = 1.0; col[idx * 3 + 1] = 1.0; col[idx * 3 + 2] = 1.0;
+                siz[idx] = CONFIG.particleSize * (0.7 + Math.random() * 0.6);
                 idx++;
             }
         }
 
-        var geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+        var geom = new THREE.BufferGeometry();
+        geom.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        geom.setAttribute('color', new THREE.BufferAttribute(col, 3));
+        geom.setAttribute('size', new THREE.BufferAttribute(siz, 1));
 
-        var material = new THREE.ShaderMaterial({
+        particleMat = new THREE.ShaderMaterial({
             uniforms: {
                 uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
-                uResolution: { value: new THREE.Vector2(W, H) }
+                uResolution: { value: new THREE.Vector2(W, H) },
+                uFadeInner: { value: CONFIG.fadeInner },
+                uFadeOuter: { value: CONFIG.fadeOuter },
+                uFadeMin: { value: CONFIG.fadeMinAlpha },
+                uFadeMax: { value: CONFIG.fadeMaxAlpha }
             },
             vertexShader: [
                 'attribute float size;',
@@ -434,45 +394,42 @@
             fragmentShader: [
                 'varying vec3 vColor;',
                 'varying vec2 vScreenPos;',
+                'uniform float uFadeInner;',
+                'uniform float uFadeOuter;',
+                'uniform float uFadeMin;',
+                'uniform float uFadeMax;',
                 'void main() {',
                 '    float dist = length(gl_PointCoord - vec2(0.5));',
                 '    if (dist > 0.5) discard;',
                 '    float alpha = 1.0 - smoothstep(0.3, 0.5, dist);',
-                '',
-                '    // Radial fade from center — large clear zone for hero text',
                 '    float centerDist = length(vScreenPos);',
-                '    float centerFade = smoothstep(0.35, 1.0, centerDist);',
-                '    centerFade = mix(0.02, 0.7, centerFade);',
-                '',
+                '    float centerFade = smoothstep(uFadeInner, uFadeOuter, centerDist);',
+                '    centerFade = mix(uFadeMin, uFadeMax, centerFade);',
                 '    gl_FragColor = vec4(vColor, alpha * 0.7 * centerFade);',
                 '}'
             ].join('\n'),
             blending: THREE.AdditiveBlending,
-            depthTest: false,
-            transparent: true,
-            vertexColors: true
+            depthTest: false, transparent: true, vertexColors: true
         });
 
-        particleField = new THREE.Points(geometry, material);
+        particleField = new THREE.Points(geom, particleMat);
         particleScene.add(particleField);
     }
 
     /* ============================================================
-       FLUID SIMULATION
+       FLUID SIM
     ============================================================ */
-    function renderQuad(material, target) {
-        var mesh = new THREE.Mesh(quadGeom, material);
-        fluidScene.add(mesh);
+    function renderQuad(mat, target) {
+        var m = new THREE.Mesh(quadGeom, mat);
+        fluidScene.add(m);
         renderer.setRenderTarget(target);
         renderer.render(fluidScene, fluidCamera);
-        fluidScene.remove(mesh);
-        mesh.geometry = undefined;
+        fluidScene.remove(m);
+        m.geometry = undefined;
     }
 
     function splatAtPoint(x, y, dx, dy) {
-        var W = container.offsetWidth;
-        var H = container.offsetHeight;
-
+        var W = container.offsetWidth, H = container.offsetHeight;
         splatMat.uniforms.uTarget.value = velocity.read.texture;
         splatMat.uniforms.point.value.set(x, y);
         splatMat.uniforms.color.value.set(dx * CONFIG.splatForce, dy * CONFIG.splatForce, 0);
@@ -483,25 +440,21 @@
     }
 
     function stepFluid(dt) {
-        // 1. Advect velocity
         advectMat.uniforms.uVelocity.value = velocity.read.texture;
         advectMat.uniforms.uSource.value = velocity.read.texture;
         advectMat.uniforms.dt.value = dt;
-        advectMat.uniforms.dissipation.value = 0.97;
+        advectMat.uniforms.dissipation.value = CONFIG.velocityDissipation;
         renderQuad(advectMat, velocity.write);
         velocity.swap();
 
-        // 2. Divergence
         divergenceMat.uniforms.uVelocity.value = velocity.read.texture;
         renderQuad(divergenceMat, divergenceFBO);
 
-        // 3. Clear pressure
         clearMat.uniforms.uTexture.value = pressure.read.texture;
         clearMat.uniforms.value.value = 0.8;
         renderQuad(clearMat, pressure.write);
         pressure.swap();
 
-        // 4. Pressure solve
         pressureMat.uniforms.uDivergence.value = divergenceFBO.texture;
         for (var i = 0; i < CONFIG.pressureIterations; i++) {
             pressureMat.uniforms.uPressure.value = pressure.read.texture;
@@ -509,7 +462,6 @@
             pressure.swap();
         }
 
-        // 5. Gradient subtraction
         gradientMat.uniforms.uPressure.value = pressure.read.texture;
         gradientMat.uniforms.uVelocity.value = velocity.read.texture;
         renderQuad(gradientMat, velocity.write);
@@ -521,118 +473,347 @@
     ============================================================ */
     function onMouseMove(e) {
         var rect = container.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-
-        mouse.prevX = mouse.x;
-        mouse.prevY = mouse.y;
-        mouse.x = x;
-        mouse.y = y;
+        var x = e.clientX - rect.left, y = e.clientY - rect.top;
+        mouse.prevX = mouse.x; mouse.prevY = mouse.y;
+        mouse.x = x; mouse.y = y;
         mouse.dx = (mouse.x - mouse.prevX) / container.offsetWidth;
         mouse.dy = -(mouse.y - mouse.prevY) / container.offsetHeight;
-
         mouseNorm.x = x / container.offsetWidth;
         mouseNorm.y = 1.0 - (y / container.offsetHeight);
     }
-
     function onMouseEnter() { isMouseOver = true; }
-    function onMouseLeave() {
-        isMouseOver = false;
-        mouse.x = -9999;
-        mouse.y = -9999;
-    }
+    function onMouseLeave() { isMouseOver = false; mouse.x = -9999; mouse.y = -9999; }
 
     function onResize() {
-        var W = container.offsetWidth;
-        var H = container.offsetHeight;
-
-        particleCamera.left = -W / 2;
-        particleCamera.right = W / 2;
-        particleCamera.top = H / 2;
-        particleCamera.bottom = -H / 2;
+        var W = container.offsetWidth, H = container.offsetHeight;
+        particleCamera.left = -W / 2; particleCamera.right = W / 2;
+        particleCamera.top = H / 2; particleCamera.bottom = -H / 2;
         particleCamera.updateProjectionMatrix();
-
         renderer.setSize(W, H);
     }
 
     /* ============================================================
-       ANIMATION LOOP
+       ANIMATION
     ============================================================ */
+
+    // Tint color animation state — all channels transition together
+    // Cycle: 10s hold → 10s smooth transition → new color → repeat
+    var tintAnim = {
+        fromR: 0, fromG: 0, fromB: 0,
+        toR: Math.random() * 0.5, toG: Math.random() * 0.5, toB: Math.random() * 0.5,
+        phaseStart: 0
+    };
+    var TINT_HOLD = 10;
+    var TINT_TRANSITION = 10;
+    var TINT_CYCLE = TINT_HOLD + TINT_TRANSITION;
+
+    function getAnimatedTint(elapsed) {
+        var localTime = elapsed - tintAnim.phaseStart;
+
+        // Advance cycles if needed
+        while (localTime >= TINT_CYCLE) {
+            tintAnim.fromR = tintAnim.toR;
+            tintAnim.fromG = tintAnim.toG;
+            tintAnim.fromB = tintAnim.toB;
+            tintAnim.toR = Math.random() * 0.5;
+            tintAnim.toG = Math.random() * 0.5;
+            tintAnim.toB = Math.random() * 0.5;
+            tintAnim.phaseStart += TINT_CYCLE;
+            localTime = elapsed - tintAnim.phaseStart;
+        }
+
+        if (localTime < TINT_HOLD) {
+            // Holding at current color
+            return { r: tintAnim.fromR, g: tintAnim.fromG, b: tintAnim.fromB };
+        } else {
+            // Transitioning to next color
+            var t = (localTime - TINT_HOLD) / TINT_TRANSITION;
+            t = t * t * (3 - 2 * t); // smoothstep
+            return {
+                r: tintAnim.fromR + (tintAnim.toR - tintAnim.fromR) * t,
+                g: tintAnim.fromG + (tintAnim.toG - tintAnim.fromG) * t,
+                b: tintAnim.fromB + (tintAnim.toB - tintAnim.fromB) * t
+            };
+        }
+    }
+
+    // Highlight color animation state — same pattern as tint
+    var highlightAnim = {
+        fromR: 0, fromG: 0, fromB: 0,
+        toR: Math.random() * 0.5, toG: Math.random() * 0.5, toB: Math.random() * 0.5,
+        phaseStart: 0
+    };
+
+    function getAnimatedHighlight(elapsed) {
+        var localTime = elapsed - highlightAnim.phaseStart;
+
+        while (localTime >= TINT_CYCLE) {
+            highlightAnim.fromR = highlightAnim.toR;
+            highlightAnim.fromG = highlightAnim.toG;
+            highlightAnim.fromB = highlightAnim.toB;
+            highlightAnim.toR = Math.random() * 0.5;
+            highlightAnim.toG = Math.random() * 0.5;
+            highlightAnim.toB = Math.random() * 0.5;
+            highlightAnim.phaseStart += TINT_CYCLE;
+            localTime = elapsed - highlightAnim.phaseStart;
+        }
+
+        if (localTime < TINT_HOLD) {
+            return { r: highlightAnim.fromR, g: highlightAnim.fromG, b: highlightAnim.fromB };
+        } else {
+            var t = (localTime - TINT_HOLD) / TINT_TRANSITION;
+            t = t * t * (3 - 2 * t);
+            return {
+                r: highlightAnim.fromR + (highlightAnim.toR - highlightAnim.fromR) * t,
+                g: highlightAnim.fromG + (highlightAnim.toG - highlightAnim.fromG) * t,
+                b: highlightAnim.fromB + (highlightAnim.toB - highlightAnim.fromB) * t
+            };
+        }
+    }
+
+    function syncUniforms() {
+        var elapsed = clock.getElapsedTime();
+
+        // Animated tint color
+        var tint = getAnimatedTint(elapsed);
+        refractionMat.uniforms.uTint.value.set(tint.r, tint.g, tint.b);
+
+        // Animated highlight color
+        var hl = getAnimatedHighlight(elapsed);
+        refractionMat.uniforms.uHighlight.value.set(hl.r, hl.g, hl.b);
+        refractionMat.uniforms.uDiffuse.value = CONFIG.diffuseIntensity;
+        refractionMat.uniforms.uSpecular.value = CONFIG.specularIntensity;
+        refractionMat.uniforms.uSpecPow.value = CONFIG.specularPower;
+        refractionMat.uniforms.uFresnel.value = CONFIG.fresnelIntensity;
+
+        // Animated chromatic strength: 0.04 ↔ 0, 10s hold + 10s transition each
+        // Total cycle: 40s (0.04 hold → transition → 0 hold → transition → repeat)
+        var cycleDuration = 40; // seconds
+        var phase = (elapsed % cycleDuration) / cycleDuration; // 0–1
+        var chromatic;
+        if (phase < 0.25) {
+            // Hold at 0.04 (0–10s)
+            chromatic = 0.04;
+        } else if (phase < 0.5) {
+            // Transition 0.04 → 0 (10–20s) with smooth ease
+            var t = (phase - 0.25) / 0.25;
+            t = t * t * (3 - 2 * t); // smoothstep
+            chromatic = 0.04 * (1 - t);
+        } else if (phase < 0.75) {
+            // Hold at 0 (20–30s)
+            chromatic = 0;
+        } else {
+            // Transition 0 → 0.04 (30–40s) with smooth ease
+            var t2 = (phase - 0.75) / 0.25;
+            t2 = t2 * t2 * (3 - 2 * t2); // smoothstep
+            chromatic = t2 * 0.04;
+        }
+        refractionMat.uniforms.uChromatic.value = chromatic;
+        refractionMat.uniforms.uNormalStr.value = CONFIG.normalStrength;
+        refractionMat.uniforms.uAlphaMax.value = CONFIG.alphaMax;
+
+        // Particle fade
+        particleMat.uniforms.uFadeInner.value = CONFIG.fadeInner;
+        particleMat.uniforms.uFadeOuter.value = CONFIG.fadeOuter;
+        particleMat.uniforms.uFadeMin.value = CONFIG.fadeMinAlpha;
+        particleMat.uniforms.uFadeMax.value = CONFIG.fadeMaxAlpha;
+    }
+
     function animate() {
         requestAnimationFrame(animate);
-
         var dt = Math.min(clock.getDelta(), 0.016);
 
-        // Fluid input
+        syncUniforms();
+
         if (isMouseOver && mouse.prevX > -9000) {
             var force = Math.sqrt(mouse.dx * mouse.dx + mouse.dy * mouse.dy);
-            if (force > 0.0001) {
-                splatAtPoint(mouseNorm.x, mouseNorm.y, mouse.dx, mouse.dy);
-            }
+            if (force > 0.0001) splatAtPoint(mouseNorm.x, mouseNorm.y, mouse.dx, mouse.dy);
         }
         stepFluid(dt);
 
-        // Update particle positions (spring physics)
+        // Particles
         var positions = particleField.geometry.attributes.position.array;
-        var radius = CONFIG.mouseRadius;
-        var radiusSq = radius * radius;
-        var W = container.offsetWidth;
-        var H = container.offsetHeight;
-
-        var mWorldX = mouse.x - W / 2;
-        var mWorldY = -(mouse.y - H / 2);
+        var rad = CONFIG.mouseRadius, radSq = rad * rad;
+        var W = container.offsetWidth, H = container.offsetHeight;
+        var mWx = mouse.x - W / 2, mWy = -(mouse.y - H / 2);
 
         for (var i = 0; i < particleCount; i++) {
-            var i2 = i * 2;
-            var i3 = i * 3;
-
-            var origX = gridPositions[i2];
-            var origY = gridPositions[i2 + 1];
+            var i2 = i * 2, i3 = i * 3;
+            var ox = gridPositions[i2], oy = gridPositions[i2 + 1];
 
             if (isMouseOver) {
-                var pWorldX = origX + currentOffsets[i2];
-                var pWorldY = -origY + currentOffsets[i2 + 1];
-
-                var dx = pWorldX - mWorldX;
-                var dy = pWorldY - mWorldY;
-                var distSq = dx * dx + dy * dy;
-
-                if (distSq < radiusSq && distSq > 0.1) {
-                    var dist = Math.sqrt(distSq);
-                    var f = (1 - dist / radius) * CONFIG.mouseStrength;
-                    velocities[i2] += (dx / dist) * f * 0.05;
-                    velocities[i2 + 1] += (dy / dist) * f * 0.05;
+                var pwx = ox + currentOffsets[i2], pwy = -oy + currentOffsets[i2 + 1];
+                var dx = pwx - mWx, dy = pwy - mWy, dSq = dx * dx + dy * dy;
+                if (dSq < radSq && dSq > 0.1) {
+                    var d = Math.sqrt(dSq), f = (1 - d / rad) * CONFIG.mouseStrength;
+                    velocities[i2] += (dx / d) * f * 0.05;
+                    velocities[i2 + 1] += (dy / d) * f * 0.05;
                 }
             }
-
             velocities[i2] += -currentOffsets[i2] * CONFIG.springStiffness;
             velocities[i2 + 1] += -currentOffsets[i2 + 1] * CONFIG.springStiffness;
-
             velocities[i2] *= CONFIG.damping;
             velocities[i2 + 1] *= CONFIG.damping;
-
             currentOffsets[i2] += velocities[i2];
             currentOffsets[i2 + 1] += velocities[i2 + 1];
-
-            positions[i3] = origX + currentOffsets[i2];
-            positions[i3 + 1] = -origY + currentOffsets[i2 + 1];
+            positions[i3] = ox + currentOffsets[i2];
+            positions[i3 + 1] = -oy + currentOffsets[i2 + 1];
         }
-
         particleField.geometry.attributes.position.needsUpdate = true;
 
-        // --- Render ---
+        // Render
         renderer.setRenderTarget(null);
         renderer.clear();
-
-        // Draw water refraction overlay
         refractionMat.uniforms.uVelocity.value = velocity.read.texture;
-        var refractionMesh = new THREE.Mesh(quadGeom, refractionMat);
-        fluidScene.add(refractionMesh);
-        renderer.render(fluidScene, fluidCamera);
-        fluidScene.remove(refractionMesh);
-
-        // Draw particles on top
+        var rm = new THREE.Mesh(quadGeom, refractionMat);
+        fluidScene.add(rm); renderer.render(fluidScene, fluidCamera); fluidScene.remove(rm);
         renderer.render(particleScene, particleCamera);
+    }
+
+    /* ============================================================
+       SETTINGS UI PANEL
+    ============================================================ */
+    function buildUI() {
+        var panel = document.createElement('div');
+        panel.id = 'fx-settings-panel';
+        panel.style.cssText = [
+            'position:fixed;top:80px;left:0;z-index:9999;',
+            'background:rgba(10,10,10,0.88);color:#ddd;',
+            'font-family:Consolas,monospace;font-size:11px;',
+            'padding:12px 14px;border-radius:0 8px 8px 0;',
+            'max-height:calc(100vh - 100px);overflow-y:auto;',
+            'width:260px;backdrop-filter:blur(8px);',
+            'border:1px solid rgba(219,207,127,0.3);border-left:none;',
+            'transition:transform 0.3s ease;',
+            'scrollbar-width:thin;scrollbar-color:#555 transparent;'
+        ].join('');
+
+        var toggleBtn = document.createElement('button');
+        toggleBtn.textContent = '⚙ FX';
+        toggleBtn.style.cssText = [
+            'position:fixed;top:80px;left:0;z-index:10000;',
+            'background:rgba(10,10,10,0.85);color:#dbcf7f;',
+            'border:1px solid rgba(219,207,127,0.4);border-left:none;',
+            'padding:6px 10px;cursor:pointer;font-family:Consolas,monospace;',
+            'font-size:12px;border-radius:0 6px 6px 0;'
+        ].join('');
+
+        var visible = false;
+        panel.style.transform = 'translateX(-100%)';
+
+        toggleBtn.addEventListener('click', function () {
+            visible = !visible;
+            panel.style.transform = visible ? 'translateX(0)' : 'translateX(-100%)';
+            toggleBtn.style.left = visible ? '260px' : '0';
+        });
+
+        // Section helper
+        function addSection(title) {
+            var h = document.createElement('div');
+            h.textContent = title;
+            h.style.cssText = 'color:#dbcf7f;font-weight:bold;margin:10px 0 6px;font-size:12px;border-bottom:1px solid rgba(219,207,127,0.2);padding-bottom:3px;';
+            panel.appendChild(h);
+        }
+
+        // Slider helper
+        function addSlider(label, key, min, max, step) {
+            var wrap = document.createElement('div');
+            wrap.style.cssText = 'display:flex;align-items:center;margin:3px 0;gap:6px;';
+
+            var lbl = document.createElement('span');
+            lbl.textContent = label;
+            lbl.style.cssText = 'flex:0 0 110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+
+            var slider = document.createElement('input');
+            slider.type = 'range';
+            slider.min = min; slider.max = max; slider.step = step;
+            slider.value = CONFIG[key];
+            slider.style.cssText = 'flex:1;height:4px;accent-color:#dbcf7f;cursor:pointer;';
+
+            var val = document.createElement('span');
+            val.textContent = parseFloat(CONFIG[key]).toFixed(step < 0.01 ? 3 : 2);
+            val.style.cssText = 'flex:0 0 42px;text-align:right;font-size:10px;color:#aaa;';
+
+            slider.addEventListener('input', function () {
+                CONFIG[key] = parseFloat(this.value);
+                val.textContent = parseFloat(this.value).toFixed(step < 0.01 ? 3 : 2);
+            });
+
+            wrap.appendChild(lbl);
+            wrap.appendChild(slider);
+            wrap.appendChild(val);
+            panel.appendChild(wrap);
+        }
+
+        // Export button helper
+        function addExportBtn() {
+            var btn = document.createElement('button');
+            btn.textContent = '📋 Copy Current Settings';
+            btn.style.cssText = 'width:100%;margin-top:10px;padding:6px;background:#dbcf7f;color:#111;border:none;border-radius:4px;cursor:pointer;font-family:Consolas,monospace;font-size:11px;font-weight:bold;';
+            btn.addEventListener('click', function () {
+                var keys = [
+                    'splatRadius', 'splatForce', 'velocityDissipation', 'pressureIterations',
+                    'tintR', 'tintG', 'tintB', 'highlightR', 'highlightG', 'highlightB',
+                    'diffuseIntensity', 'specularIntensity', 'specularPower',
+                    'fresnelIntensity', 'chromaticStrength', 'normalStrength', 'alphaMax',
+                    'particleSize', 'mouseRadius', 'mouseStrength', 'springStiffness', 'damping',
+                    'fadeInner', 'fadeOuter', 'fadeMinAlpha', 'fadeMaxAlpha'
+                ];
+                var out = '--- Current Settings ---\n';
+                keys.forEach(function (k) { out += k + ': ' + CONFIG[k] + '\n'; });
+                navigator.clipboard.writeText(out).then(function () {
+                    btn.textContent = '✅ Copied!';
+                    setTimeout(function () { btn.textContent = '📋 Copy Current Settings'; }, 1500);
+                });
+            });
+            panel.appendChild(btn);
+        }
+
+        // Build sections
+        var title = document.createElement('div');
+        title.textContent = 'FX SETTINGS';
+        title.style.cssText = 'font-size:14px;font-weight:bold;color:#dbcf7f;margin-bottom:8px;text-align:center;';
+        panel.appendChild(title);
+
+        addSection('🌊 Fluid Simulation');
+        addSlider('Splat Radius', 'splatRadius', 0.001, 0.02, 0.001);
+        addSlider('Splat Force', 'splatForce', 500, 10000, 100);
+        addSlider('Vel Dissipation', 'velocityDissipation', 0.9, 1.0, 0.005);
+        addSlider('Pressure Iters', 'pressureIterations', 5, 40, 1);
+
+        addSection('💧 Refraction Colors');
+        addSlider('Tint R', 'tintR', 0, 1, 0.01);
+        addSlider('Tint G', 'tintG', 0, 1, 0.01);
+        addSlider('Tint B', 'tintB', 0, 1, 0.01);
+        addSlider('Highlight R', 'highlightR', 0, 1, 0.01);
+        addSlider('Highlight G', 'highlightG', 0, 1, 0.01);
+        addSlider('Highlight B', 'highlightB', 0, 1, 0.01);
+
+        addSection('✨ Refraction Effect');
+        addSlider('Diffuse', 'diffuseIntensity', 0, 1, 0.01);
+        addSlider('Specular', 'specularIntensity', 0, 2, 0.01);
+        addSlider('Spec Power', 'specularPower', 5, 100, 1);
+        addSlider('Fresnel', 'fresnelIntensity', 0, 1, 0.01);
+        addSlider('Chromatic', 'chromaticStrength', 0, 0.3, 0.005);
+        addSlider('Normal Str', 'normalStrength', 1, 30, 0.5);
+        addSlider('Alpha Max', 'alphaMax', 0, 1, 0.01);
+
+        addSection('⬡ Particles');
+        addSlider('Mouse Radius', 'mouseRadius', 50, 400, 5);
+        addSlider('Mouse Strength', 'mouseStrength', 10, 200, 5);
+        addSlider('Spring Stiff', 'springStiffness', 0.005, 0.1, 0.005);
+        addSlider('Damping', 'damping', 0.7, 0.98, 0.01);
+
+        addSection('🎯 Center Fade');
+        addSlider('Fade Inner', 'fadeInner', 0, 1, 0.01);
+        addSlider('Fade Outer', 'fadeOuter', 0.3, 2, 0.01);
+        addSlider('Min Alpha', 'fadeMinAlpha', 0, 0.5, 0.01);
+        addSlider('Max Alpha', 'fadeMaxAlpha', 0.1, 1, 0.01);
+
+        addExportBtn();
+
+        document.body.appendChild(panel);
+        document.body.appendChild(toggleBtn);
     }
 
     /* ============================================================

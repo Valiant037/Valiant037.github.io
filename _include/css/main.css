@@ -1550,6 +1550,48 @@ footer .credits {
 	justify-content: center;
 }
 
+/* Film grain overlay */
+.intro::after {
+	content: '';
+	position: absolute;
+	top: -50%;
+	left: -50%;
+	width: 200%;
+	height: 200%;
+	z-index: 8;
+	pointer-events: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+	opacity: 0.18;
+	mix-blend-mode: soft-light;
+	animation: grainShift 0.5s steps(5) infinite;
+}
+
+@keyframes grainShift {
+	0% {
+		transform: translate(0, 0);
+	}
+
+	20% {
+		transform: translate(-2%, -3%);
+	}
+
+	40% {
+		transform: translate(3%, 1%);
+	}
+
+	60% {
+		transform: translate(-1%, 2%);
+	}
+
+	80% {
+		transform: translate(2%, -1%);
+	}
+
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
 .intro-page {
 	text-align: center;
 	margin-bottom: 0;
