@@ -346,10 +346,14 @@ jQuery(function ($) {
 	================================================== */
 
 	BRUSHED.goSection = function () {
-		$('#nextsection').on('click', function () {
-			$target = $($(this).attr('href')).offset().top - 30;
+		$('#nextsection, #scroll-down').on('click', function (e) {
+			e.preventDefault();
+			var href = $(this).attr('href');
+			var $target = $(href);
+			if (!$target.length) return;
+			var targetTop = $target.offset().top - 30;
 
-			$('body, html').animate({ scrollTop: $target }, 750, 'easeOutExpo');
+			$('body, html').animate({ scrollTop: targetTop }, 750, 'easeOutExpo');
 			return false;
 		});
 	}

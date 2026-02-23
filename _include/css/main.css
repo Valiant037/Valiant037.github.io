@@ -1556,6 +1556,56 @@ footer .credits {
 	z-index: 1;
 }
 
+.scroll-indicator {
+	position: absolute;
+	bottom: 40px;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-decoration: none;
+	z-index: 10;
+	opacity: 0.6;
+	transition: opacity 0.3s ease;
+	pointer-events: auto;
+	cursor: pointer;
+}
+
+.scroll-indicator:hover {
+	opacity: 1;
+}
+
+.scroll-text {
+	font-family: 'futura_lightregular', sans-serif;
+	font-size: 11px;
+	letter-spacing: 3px;
+	text-transform: uppercase;
+	color: #FFFFFF;
+	margin-bottom: 8px;
+}
+
+.scroll-icon {
+	font-size: 24px;
+	color: #dbcf7f;
+	line-height: 1;
+	animation: scrollBounce 2s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+
+	0%,
+	100% {
+		transform: translateY(0);
+		opacity: 0.4;
+	}
+
+	50% {
+		transform: translateY(8px);
+		opacity: 1;
+	}
+}
+
 .intro-page .hero-name {
 	font-family: 'futura_lightregular', sans-serif;
 	font-size: clamp(60px, 12vw, 160px);
