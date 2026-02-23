@@ -518,16 +518,19 @@ header .sticky-nav.stuck {
 header #logo {
 	color: #FFFFFF;
 	float: left;
-	padding: 15px 0;
 	margin-left: 20px;
 }
 
 header #logo a {
-	background: url(../img/logo_d.png) no-repeat;
-	width: 231px;
-	height: 30px;
-	text-indent: -9999px;
+	font-family: 'futura_lightregular', sans-serif;
+	font-size: 16px;
+	font-weight: 300;
+	color: #FFFFFF;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	line-height: 60px;
 	display: block;
+	text-decoration: none;
 	opacity: 1;
 	filter: alpha(opacity=100);
 
