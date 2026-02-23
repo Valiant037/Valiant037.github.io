@@ -130,8 +130,10 @@ BRUSHED.filter = function (){
 			  return false;
 			}
 			var $optionSet = $this.parents('.option-set');
-			$optionSet.find('.selected').removeClass('selected');
-			$this.addClass('selected');
+			$optionSet.find('.selected')
+				.removeClass('selected')
+				.attr('aria-pressed','false');
+			$this.addClass('selected').attr('aria-pressed','true');
 	  
 			// make option object dynamically, i.e. { filter: '.my-filter-class' }
 			var options = {},
@@ -164,8 +166,53 @@ BRUSHED.fancyBox = function(){
 		$(".fancybox").fancybox({				
 				padding : 0,
 				beforeShow: function () {
-					this.title = $(this.element).attr('title');
-					this.title = '<h4>' + this.title + '</h4>' + '<p>' + $(this.element).parent().find('img').attr('alt') + '</p>';
+					var $trigger   = $(this.element);
+					var $item      = $trigger.closest('.item-thumbs');
+					var $img       = $item.find('img').first();
+					var title      = $trigger.attr('title') || '';
+					var summary    = $item.data('summary') || $img.attr('alt') || '';
+					var role       = $item.data('role') || '';
+					var year       = $item.data('year') || '';
+					var medium     = $item.data('medium') || '';
+					var primaryUrl = $item.data('link-primary') || '';
+					var slug       = $item.data('slug') || '';
+
+					var metaParts = [];
+					if (role) {
+						metaParts.push('<strong>Role:</strong> ' + role);
+					}
+					if (medium) {
+						metaParts.push('<strong>Type:</strong> ' + medium);
+					}
+					if (year) {
+						metaParts.push('<strong>Year:</strong> ' + year);
+					}
+
+					var html = '<div class="fancybox-meta">';
+
+					if (title) {
+						html += '<h4>' + title + '</h4>';
+					}
+
+					if (metaParts.length) {
+						html += '<p class="fancybox-meta-line">' + metaParts.join(' &middot; ') + '</p>';
+					}
+
+					if (summary) {
+						html += '<p>' + summary + '</p>';
+					}
+
+					if (slug) {
+						html += '<p class="fancybox-cta"><a href="project-' + slug + '.html" class="btn-case-study">View full case study</a></p>';
+					}
+
+					if (primaryUrl) {
+						html += '<p class="fancybox-links"><a href="' + primaryUrl + '" target="_blank" rel="noopener">Open external link</a></p>';
+					}
+
+					html += '</div>';
+
+					this.title = html;
 				},
 				helpers : {
 					title : { type: 'inside' },
