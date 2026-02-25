@@ -1900,6 +1900,11 @@ figure.effect-dean:hover p {
 	object-fit: cover;
 }
 
+.case-study-page #project-gallery .item-thumbs .hover-wrap .overlay-img,
+.case-study-page #project-gallery .item-thumbs .hover-wrap .overlay-img-thumb {
+	display: none;
+}
+
 .case-study-page .project-process-block {
 	margin-bottom: 40px;
 }
@@ -1939,4 +1944,40 @@ figure.effect-dean:hover p {
 	font-size: 14px;
 	line-height: 24px;
 	margin-bottom: 6px;
+}
+
+/* YouTube thumbnail fallback */
+.yt-thumb-link {
+	position: relative;
+	display: block;
+}
+
+.yt-thumb-img {
+	width: 100%;
+	display: block;
+	border-radius: 4px;
+}
+
+.yt-play-btn {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 28px;
+	color: #fff;
+	background: rgba(0, 0, 0, 0.65);
+	width: 64px;
+	height: 64px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-left: 4px;
+	box-sizing: border-box;
+	border-radius: 50%;
+	pointer-events: none;
+	transition: background 0.25s ease;
+}
+
+.yt-thumb-link:hover .yt-play-btn {
+	background: rgba(219, 207, 127, 0.85);
 }
