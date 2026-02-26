@@ -339,8 +339,14 @@
        PARTICLES
     ============================================================ */
     function createParticles(W, H) {
-        var spacing = Math.floor(Math.sqrt((W * H) / 5000));
-        if (spacing < 10) spacing = 10;
+        // Scale particle density & size relative to 1080p baseline
+        var REF_WIDTH = 1920;
+        var screenScale = Math.min(W / REF_WIDTH, 1.0); // 0..1, capped at 1
+
+        // Grid: ~5000 particles at 1080p, scale down for smaller screens
+        var targetCount = Math.round(5000 * Math.max(screenScale, 0.3));
+        var spacing = Math.floor(Math.sqrt((W * H) / targetCount));
+        if (spacing < 8) spacing = 8;
         var cols = Math.ceil(W / spacing) + 1;
         var rows = Math.ceil(H / spacing) + 1;
         particleCount = cols * rows;
@@ -361,7 +367,8 @@
                 pos[idx * 3] = px; pos[idx * 3 + 1] = -py; pos[idx * 3 + 2] = 0;
                 // All white
                 col[idx * 3] = 1.0; col[idx * 3 + 1] = 1.0; col[idx * 3 + 2] = 1.0;
-                siz[idx] = CONFIG.particleSize * (0.7 + Math.random() * 0.6);
+                var sizeScale = Math.max(screenScale, 0.35);
+                siz[idx] = CONFIG.particleSize * sizeScale * (0.7 + Math.random() * 0.6);
                 idx++;
             }
         }
@@ -373,7 +380,7 @@
 
         particleMat = new THREE.ShaderMaterial({
             uniforms: {
-                uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+                uPixelRatio: { value: 1 },
                 uResolution: { value: new THREE.Vector2(W, H) },
                 uFadeInner: { value: CONFIG.fadeInner },
                 uFadeOuter: { value: CONFIG.fadeOuter },
