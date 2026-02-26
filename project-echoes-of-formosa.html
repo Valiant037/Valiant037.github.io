@@ -319,11 +319,21 @@
     <script src="_include/js/jquery.fancybox.pack.js"></script>
     <script src="_include/js/jquery.fancybox-media.js"></script>
     <script>
-        jQuery(funct ion(                     if ($('.fancybox').length > 0 || $('.fancybox-media').lengt                             $(".fancybox"                                                                                                             titl                    de                                                  });
+        jQuery(function ($) {
+            if ($('.fancybox').length > 0 || $('.fancybox-media').length > 0) {
+                $(".fancybox").fancybox({
+                    padding: 0,
+                    helpers: {
+                        title: { type: 'inside' }
+                    }
+                });
 
-                                  edia').fanbox({
-        openEffect: 'none',
-            closeffec                                                                                        { }                  }
+                $('.fancybox-media').fancybox({
+                    openEffect: 'none',
+                    closeEffect: 'none',
+                    helpers: {
+                        media: {}
+                    }
                 });
             }
         });
