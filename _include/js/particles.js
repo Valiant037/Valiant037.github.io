@@ -233,7 +233,7 @@
     function createDoubleFBO(w, h) {
         var params = {
             minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
-            format: THREE.RGBAFormat, type: THREE.FloatType,
+            format: THREE.RGBAFormat, type: THREE.HalfFloatType,
             stencilBuffer: false, depthBuffer: false
         };
         return {
@@ -246,7 +246,7 @@
     function createFBO(w, h) {
         return new THREE.WebGLRenderTarget(w, h, {
             minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
-            format: THREE.RGBAFormat, type: THREE.FloatType,
+            format: THREE.RGBAFormat, type: THREE.HalfFloatType,
             stencilBuffer: false, depthBuffer: false
         });
     }
@@ -496,6 +496,8 @@
 
     // Touch handlers — map touch events to the same mouse state
     function onTouchStart(e) {
+        // Let scroll indicators work normally
+        if (e.target.closest('.scroll-indicator')) return;
         e.preventDefault();
         isMouseOver = true;
         var touch = e.touches[0];
@@ -508,6 +510,7 @@
         mouseNorm.y = 1.0 - (y / container.offsetHeight);
     }
     function onTouchMove(e) {
+        if (e.target.closest('.scroll-indicator')) return;
         e.preventDefault();
         var touch = e.touches[0];
         var rect = container.getBoundingClientRect();
