@@ -323,6 +323,9 @@
         container.addEventListener('mousemove', onMouseMove);
         container.addEventListener('mouseleave', onMouseLeave);
         container.addEventListener('mouseenter', onMouseEnter);
+        container.addEventListener('touchstart', onTouchStart, { passive: false });
+        container.addEventListener('touchmove', onTouchMove, { passive: false });
+        container.addEventListener('touchend', onTouchEnd);
         window.addEventListener('resize', onResize);
 
         animate();
@@ -483,6 +486,36 @@
     }
     function onMouseEnter() { isMouseOver = true; }
     function onMouseLeave() { isMouseOver = false; mouse.x = -9999; mouse.y = -9999; }
+
+    // Touch handlers — map touch events to the same mouse state
+    function onTouchStart(e) {
+        e.preventDefault();
+        isMouseOver = true;
+        var touch = e.touches[0];
+        var rect = container.getBoundingClientRect();
+        var x = touch.clientX - rect.left, y = touch.clientY - rect.top;
+        mouse.x = x; mouse.y = y;
+        mouse.prevX = x; mouse.prevY = y;
+        mouse.dx = 0; mouse.dy = 0;
+        mouseNorm.x = x / container.offsetWidth;
+        mouseNorm.y = 1.0 - (y / container.offsetHeight);
+    }
+    function onTouchMove(e) {
+        e.preventDefault();
+        var touch = e.touches[0];
+        var rect = container.getBoundingClientRect();
+        var x = touch.clientX - rect.left, y = touch.clientY - rect.top;
+        mouse.prevX = mouse.x; mouse.prevY = mouse.y;
+        mouse.x = x; mouse.y = y;
+        mouse.dx = (mouse.x - mouse.prevX) / container.offsetWidth;
+        mouse.dy = -(mouse.y - mouse.prevY) / container.offsetHeight;
+        mouseNorm.x = x / container.offsetWidth;
+        mouseNorm.y = 1.0 - (y / container.offsetHeight);
+    }
+    function onTouchEnd() {
+        isMouseOver = false;
+        mouse.x = -9999; mouse.y = -9999;
+    }
 
     function onResize() {
         var W = container.offsetWidth, H = container.offsetHeight;
