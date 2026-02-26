@@ -206,9 +206,8 @@ jQuery(function ($) {
 						html += '<p class="fancybox-cta"><a href="project-' + slug + '.html" class="btn-case-study">View full case study</a></p>';
 					}
 
-					if (primaryUrl) {
-						html += '<p class="fancybox-links"><a href="' + primaryUrl + '" target="_blank" rel="noopener">Open external link</a></p>';
-					}
+
+
 
 					html += '</div>';
 
