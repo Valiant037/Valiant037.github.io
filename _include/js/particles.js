@@ -534,7 +534,7 @@
             isMouseOver = true;
             // Visual feedback: subtle glow on canvas
             renderer.domElement.style.boxShadow = 'inset 0 0 30px rgba(219, 207, 127, 0.15)';
-        }, 300);
+        }, 100);
     }
 
     function onTouchMove(e) {
