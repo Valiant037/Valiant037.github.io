@@ -328,6 +328,20 @@
         container.addEventListener('touchend', onTouchEnd);
         window.addEventListener('resize', onResize);
 
+        // Explicit scroll handler for scroll indicators inside the particle container
+        // (anchor default behavior can be blocked by non-passive touch listeners on some Android browsers)
+        var scrollLinks = container.querySelectorAll('.scroll-indicator');
+        for (var i = 0; i < scrollLinks.length; i++) {
+            (function (link) {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var targetId = link.getAttribute('href');
+                    var target = document.querySelector(targetId);
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                });
+            })(scrollLinks[i]);
+        }
+
         animate();
     }
 
@@ -494,23 +508,45 @@
     function onMouseEnter() { isMouseOver = true; }
     function onMouseLeave() { isMouseOver = false; mouse.x = -9999; mouse.y = -9999; }
 
-    // Touch handlers — map touch events to the same mouse state
+    // Touch handlers — hold-to-interact pattern
+    // Quick tap/swipe = normal page scroll; hold 300ms+ = particle interaction
+    var touchHoldTimer = null;
+    var touchActive = false; // true once hold threshold is met
+
     function onTouchStart(e) {
-        // Let scroll indicators work normally
         if (e.target.closest('.scroll-indicator')) return;
-        e.preventDefault();
-        isMouseOver = true;
+
         var touch = e.touches[0];
         var rect = container.getBoundingClientRect();
         var x = touch.clientX - rect.left, y = touch.clientY - rect.top;
+
+        // Store initial position but don't activate yet
         mouse.x = x; mouse.y = y;
         mouse.prevX = x; mouse.prevY = y;
         mouse.dx = 0; mouse.dy = 0;
         mouseNorm.x = x / container.offsetWidth;
         mouseNorm.y = 1.0 - (y / container.offsetHeight);
+
+        // Start hold timer — activate interaction after 300ms
+        touchActive = false;
+        touchHoldTimer = setTimeout(function () {
+            touchActive = true;
+            isMouseOver = true;
+            // Visual feedback: subtle glow on canvas
+            renderer.domElement.style.boxShadow = 'inset 0 0 30px rgba(219, 207, 127, 0.15)';
+        }, 300);
     }
+
     function onTouchMove(e) {
         if (e.target.closest('.scroll-indicator')) return;
+
+        if (!touchActive) {
+            // Not yet holding — cancel timer if finger moved (it's a scroll/swipe)
+            if (touchHoldTimer) { clearTimeout(touchHoldTimer); touchHoldTimer = null; }
+            return; // let browser scroll normally
+        }
+
+        // Holding — interact with particles, block scroll
         e.preventDefault();
         var touch = e.touches[0];
         var rect = container.getBoundingClientRect();
@@ -522,9 +558,13 @@
         mouseNorm.x = x / container.offsetWidth;
         mouseNorm.y = 1.0 - (y / container.offsetHeight);
     }
+
     function onTouchEnd() {
+        if (touchHoldTimer) { clearTimeout(touchHoldTimer); touchHoldTimer = null; }
+        touchActive = false;
         isMouseOver = false;
         mouse.x = -9999; mouse.y = -9999;
+        renderer.domElement.style.boxShadow = 'none';
     }
 
     function onResize() {
