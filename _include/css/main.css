@@ -1992,3 +1992,164 @@ figure.effect-dean:hover p {
 .yt-thumb-link:hover .yt-play-btn {
 	background: rgba(219, 207, 127, 0.85);
 }
+
+
+/* ==================================================
+   360° Panorama Viewer
+================================================== */
+
+#pano-modal {
+	display: none;
+	position: fixed;
+	inset: 0;
+	z-index: 2000;
+	background: #000;
+	flex-direction: column;
+}
+
+#pano-modal.pano-modal-open {
+	display: flex;
+}
+
+/* Canvas fills the whole modal */
+#pano-canvas {
+	position: absolute;
+	inset: 0;
+	width: 100% !important;
+	height: 100% !important;
+	cursor: grab;
+	display: block;
+}
+
+#pano-canvas:active {
+	cursor: grabbing;
+}
+
+/* Loading overlay */
+#pano-loading {
+	position: absolute;
+	inset: 0;
+	z-index: 10;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.85);
+	color: #7F8289;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 14px;
+	gap: 16px;
+}
+
+.pano-spinner {
+	width: 40px;
+	height: 40px;
+	border: 3px solid rgba(219, 207, 127, 0.2);
+	border-top-color: #dbcf7f;
+	border-radius: 50%;
+	animation: pano-spin 0.8s linear infinite;
+}
+
+@keyframes pano-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Bottom control bar */
+.pano-controls {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 20px;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+	pointer-events: none;
+}
+
+.pano-title-text {
+	color: rgba(255, 255, 255, 0.75);
+	font-family: 'futura_lightregular', sans-serif;
+	font-size: 13px;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	pointer-events: none;
+}
+
+.pano-btn-group {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	pointer-events: all;
+}
+
+.pano-btn {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	background: rgba(10, 10, 10, 0.7);
+	border: 1px solid rgba(219, 207, 127, 0.35);
+	color: #dbcf7f;
+	border-radius: 4px;
+	padding: 6px 12px;
+	cursor: pointer;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 12px;
+	line-height: 1;
+	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+	-webkit-backdrop-filter: blur(6px);
+	backdrop-filter: blur(6px);
+}
+
+.pano-btn:hover {
+	background: rgba(219, 207, 127, 0.15);
+	border-color: #dbcf7f;
+	color: #fff;
+}
+
+.pano-btn svg {
+	flex-shrink: 0;
+}
+
+.pano-hint-btn {
+	transition: opacity 0.5s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.pano-close-btn:hover {
+	background: rgba(200, 80, 80, 0.25);
+	border-color: #e07070;
+	color: #e07070;
+}
+
+/* ── Trigger button (in page body) ── */
+.pano-trigger {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 20px 0;
+	padding: 10px 20px;
+	background: transparent;
+	border: 1px solid rgba(219, 207, 127, 0.45);
+	color: #dbcf7f;
+	font-family: 'futura_lightregular', sans-serif;
+	font-size: 14px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	border-radius: 3px;
+	cursor: pointer;
+	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.pano-trigger:hover {
+	background: rgba(219, 207, 127, 0.12);
+	border-color: #dbcf7f;
+	color: #fff;
+}
+
+.pano-trigger svg {
+	flex-shrink: 0;
+}

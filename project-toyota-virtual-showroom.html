@@ -41,6 +41,8 @@
 
     <!-- Fav Icon -->
     <link rel="shortcut icon" href="#">
+    <!-- Three.js (for 360 Panorama Viewer) -->
+    <script src='https://unpkg.com/three@0.128.0/build/three.min.js'></script>
 </head>
 
 <body>
@@ -126,6 +128,11 @@
                     </ul>
 
                     <h3>Art &amp; Process</h3>
+                    <!-- 360 Panorama Viewer Trigger -->
+                    <button class="pano-trigger" onclick="PanoViewer.open('_include/img/work/full/toyota_vrshowroom_phv_360_01.jpg', 'Toyota PRIUS PHV - 360 Virtual Showroom')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 3c-2.5 3-4 5.5-4 9s1.5 6 4 9"/><path d="M12 3c2.5 3 4 5.5 4 9s-1.5 6-4 9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+                        360 Interactive View
+                    </button>
                     <div class="project-process-block">
                         <img src="_include/img/work/full/toyotavr.png" alt="Toyota Virtual Showroom VR visuals."
                             class="shadow-img project-process-image">
@@ -197,6 +204,7 @@
     <!-- Minimal JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="_include/js/project-page.js"></script>
+    <script src='_include/js/pano-viewer.js'></script>
     <script src="_include/js/jquery.fancybox.pack.js"></script>
     <script src="_include/js/jquery.fancybox-media.js"></script>
     <script>
