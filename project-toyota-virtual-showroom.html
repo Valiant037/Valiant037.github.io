@@ -94,11 +94,7 @@
                 <div class="span8">
                     <!-- Embedded YouTube video -->
                     <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/nf2SVd8rVjE"
-                            title="Toyota Virtual Showroom VR Experience" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen>
-                        </iframe>
+                        <iframe src="https://www.youtube.com/embed/c-H3GO5U6iI?si=bqrPy5ztpSzHK5Wu" title="TOYOTA VR Showroom" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
 
                     <h3>Overview</h3>
@@ -122,7 +118,7 @@
                     <ul class="resume-item">
                         <li>Developed an interactive VR experience for high-stakes automotive marketing.</li>
                         <li>Designed realistic virtual lighting and material responses for vehicle interiors.</li>
-                        <li>Implemented intuitive VR interaction metaphors for exploring car features (doors, trunk,
+                        <li>Implemented intuitive VR interaction UI/UX for exploring car features (doors, trunk,
                             charging).</li>
                         <li>Oversaw the transition from high-end CAD data to optimized real-time VR assets.</li>
                     </ul>
@@ -134,16 +130,99 @@
                         360 Interactive View
                     </button>
                     <div class="project-process-block">
-                        <img src="_include/img/work/full/toyotavr.png" alt="Toyota Virtual Showroom VR visuals."
-                            class="shadow-img project-process-image">
-                        <p class="project-process-text">
-                            The objective was "transparency and realism." We used physically-based shaders to simulate
-                            the
-                            specific paint finishes and interior textures of the PRIUS PHV. The lighting was carefully
-                            baked to
-                            simulate a clean, high-end studio/showroom environment that feels both expansive and
-                            focused.
-                        </p>
+                        <img src="_include/img/work/full/Toyota_showroom01.jpg" alt="TOYOTA Showroom" class="shadow-img project-process-image">
+                    <br>
+                    <p class="project-process-text">
+                        <span class="color-text">Showroom</span><br>
+                        This project was a VR showroom developed for HTC’s Vive Focus headset, designed to bring immersive product experiences to every TOYOTA dealership in Taiwan. The goal was to allow customers to explore car models that were not physically available in certain locations, bridging the gap between showroom limitations and customer expectations. As Art Director, I supervised the project and ensured visual fidelity throughout the experience.<br><br>One of the primary challenges was the headset itself. The standalone Vive Focus lacked the rendering power required for complex, realistic 3D objects, imposing strict limitations on polycounts, shaders, and interactions compared to PC-based VR systems like Vive or Rift. To overcome these constraints, I worked to establish a middle ground—balancing performance with visual quality—to deliver an engaging and polished showroom experience within the hardware’s capabilities.<br><br>The solution was resorting back to 'Pre-Render Images'.
+                    </p>
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom02.jpg" alt="TOYOTA Showroom - Multiple Renders" class="shadow-img project-process-image">
+                    <br>
+                    <p class="project-process-text">
+                        <span class="color-text">Tech</span><br>
+                        The first test involved importing the high-poly Toyota PHV car model into Unity and exporting it to the headset to evaluate performance. It quickly became clear that the system could not sustain an acceptable frame rate. Even simplified, low-poly versions of the model rendered poorly due to the complexity of shaders and the rendering pipeline required to achieve convincing lighting, shadows, anti-aliasing, ambient occlusion, and texture resolution comparable to pre-rendered imagery. As Art Director, with the product serving as the centerpiece of the experience, I had to make strategic compromises in interaction design to ensure the final presentation met the client’s quality standards while remaining technically feasible. <br><br> So the challenges shifted from rendering realtime 3D models to produce large amounts of pre-rendered images. We need to render a set of  60 cars images for each variation of the car. 
+
+                    </p>
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom03.jpg" alt="TOYOTA Showroom - Multiple Renders" class="shadow-img project-process-image">
+                    <br>
+                    <p class="project-process-text">
+                        <span class="color-text">Rendering Cars!</span><br>
+                        Through out the life span of this on going project (multiple updates), there are a total of 5 car models introduced in this VR showroom experience. Prius PHV, 86, Supra, Sienna and Hilux. I was fortunate enough to work on those car models as they are the rare car models. The car has to be rendered separately from the background as it needs to be interactable. And there is also an interior 360 view feature for the user so we have to render another high resolution 360 image (8k or 10k) as well. Here are some of the works final renders.
+                    </p>
+                    <button class="pano-trigger" onclick="PanoViewer.open('_include/img/work/360/phv_front_int.jpg', 'Toyota PRIUS PHV - 360 Virtual Showroom')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 3c-2.5 3-4 5.5-4 9s1.5 6 4 9"/><path d="M12 3c2.5 3 4 5.5 4 9s-1.5 6-4 9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+                        360 Interactive View
+                    </button>
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom04.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom05.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom06.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom07.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom08.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom09.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <button class="pano-trigger" onclick="PanoViewer.open('_include/img/work/360/sienna_front_int.jpg', 'Toyota Sienna - 360 Virtual Showroom')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 3c-2.5 3-4 5.5-4 9s1.5 6 4 9"/><path d="M12 3c2.5 3 4 5.5 4 9s-1.5 6-4 9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+                        360 Interactive View
+                    </button>
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom10.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom11.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom12.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom13.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom14.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom15.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <button class="pano-trigger" onclick="PanoViewer.open('_include/img/work/360/supra_int.jpg', 'Toyota Supra - 360 Virtual Showroom')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 3c-2.5 3-4 5.5-4 9s1.5 6 4 9"/><path d="M12 3c2.5 3 4 5.5 4 9s-1.5 6-4 9"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+                        360 Interactive View
+                    </button>
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom16.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom17.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom18.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom19.jpg" alt="TOYOTA Showroom - Renders" class="shadow-img project-process-image">
+                    <br>
+                    <br>
+                    <p class="project-process-text">
+                        <span class="color-text">Designs</span><br>
+                        The car models were rendered in Maya using the Redshift renderer, which I selected as the leading GPU rendering solution in 2019. I invested significant time fine-tuning the lighting for each vehicle to achieve perfect reflections and balance, as car rendering requires precise illumination to highlight form and curves. Achieving realistic car paint was particularly challenging, but Redshift’s built-in clear coat material allowed me to refine the surface and produce a beautiful metallic finish.<br><br> The most time-consuming stage was composition. After rendering EXR files for improved HDR control, I completed the compositing in After Effects. Handling transparent windshields with reflections on a transparent background proved especially difficult, requiring additional fixes to ensure the final composition looked correct.<br><br> Equally important was the stage design, which I treated as a character in its own right. A beautifully rendered car can lose impact without a proper environment to support it. Since no suitable HDRI 360 assets were available, I created all four stages digitally in Maya, ensuring they complemented the vehicles and elevated the overall presentation.
+                    </p>
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom20.jpg" alt="TOYOTA Showroom - Stages" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom21.jpg" alt="TOYOTA Showroom - Stages" class="shadow-img project-process-image">
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom22.jpg" alt="TOYOTA Showroom - Stages" class="shadow-img project-process-image">
+                    <br>
+                    <br>
+                    <p class="project-process-text">
+                        <span class="color-text">UI/UX</span><br>
+                        Here is the wireframe that I've done for the basic UI structure. The final design followed the corporate guideline of TOYOTA using red, white as my major color with black for texts.
+                    </p>
+                    <br>
+                    <img src="_include/img/work/full/Toyota_showroom23.jpg" alt="TOYOTA Showroom - UI wireframe" class="shadow-img project-process-image">
+                    <br>
+                    <br>
+                    <p class="project-process-text">
+                        <span class="color-text">Closing</span><br>
+                        This project presented numerous challenges, including hardware limitations, extensive rendering and compositing demands, and the pursuit of flawless car visualization. Despite these obstacles, I successfully demonstrated to TOYOTA Taiwan (Hotai) our team’s ability to deliver high-quality renders that met their standards. As a result, we secured long-term contracts to produce 360-degree exterior and interior images for their website, ensuring consistent visual excellence for several years.
+                    </p>
                     </div>
 
                     <h3>Gallery</h3>
@@ -179,8 +258,11 @@
                             <h3><span class="color-text">Links</span></h3>
                             <ul>
                                 <li><a href="https://youtu.be/nf2SVd8rVjE?si=Br5i8o-vaxY7UPd1" target="_blank"
-                                        rel="noopener">Experience Video</a></li>
+                                        rel="noopener">Promotional Video</a></li>
+                                <li><a href="https://business.vive.com/tw/stories/vive-focus%E8%88%87%E5%8F%B0%E7%81%A3toyota%E7%B8%BD%E4%BB%A3%E7%90%86%E5%92%8C%E6%B3%B0%E6%B1%BD%E8%BB%8A%E5%85%B1%E6%8E%A8vr%E6%B2%89%E6%B5%B8%E8%B3%9E%E8%BB%8A%E6%96%B9%E6%A1%88/" target="_blank"
+                                        rel="noopener">News Article</a></li>
                             </ul>
+
                         </div>
                     </div>
                 </div>
