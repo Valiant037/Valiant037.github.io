@@ -192,6 +192,28 @@
                             A section of the opening animation of the show. (credit: Mina)
                         </p>
                     </div>
+
+                    <div class="project-process-block">
+                        <p class="project-process-text">
+                            In the end of the show in 'Inclusion Area', the users input during the game will generate a 30 seconds AI video in realtime. I will breakdown the tech behind how it works. When presented with all the choices from the previous section. There are 20 choices from each question, 3 questions in total so there are about 60 choices users can choose from. In the end of each question, top three choices of each question will be saved to the backend computer representing the final choices from the users and determine what videos to generate from. These 9 initial choices, each contains a much more detailed generative promts that is stored in the mainframe that quickly place all the detailed prompt with random generated prompts (which is prepared in advance such as color tone, atmosphere, style to gives variation even if the 9 choices are identicals) to generate 3 sets of final prompts, each corresponding to a specific question. The system that handles this a modified Stable Diffusion that's setup to directly receive command without the use of Automatic1111 interface. (The following image is the spreadsheet that I worked on to save the prompts responding to each choice) 
+                        </p>
+                        <br>
+                        <img src="_include/img/work/full/digiwave_ai_01.jpg" alt="Digiwave: Latent Space - AI Video"
+                            class="shadow-img project-process-image">
+                        <br>
+                        <p class="project-process-text"> 
+                            These three set of prompts will then feeds into Deforum (Stable Diffusion plugin) to generate a video that that uses frames-interpolation between these 3 sets of prompts base on the runtime that swap in given key frame. After the video is generated, it will automatically go through upscaling process to increase its size to 2k(?) for projection quality on the 6X1l meter wall. 
+                        </p>
+                        <br>
+                        <img src="_include/img/work/gif/digiwave_ai_01.gif" alt="Digiwave: Latent Space - AI Video"
+                            class="shadow-img project-process-image">
+                        <br>
+                        <p class="project-process-text">
+                            This is an early testing video that I've done in pre-production to test the effect of frame-interpolation. I was very impressed with how three simple sets of prompts can produce such dynamic results. So I was confident that we can use this technique in the project and proposed this solution to the team.
+                        </p>
+                        <br>
+                        <br>
+                    </div>
                     <br>
                     <div class="project-process-block">
                         <div class="video-wrapper">
