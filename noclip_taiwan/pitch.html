@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moondream Reality — Project: NOCLIP TAIWAN VR Pitch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600;700;900&family=Barlow+Condensed:ital,wght@0,700;0,900;1,700;1,900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --carpet-yellow: #cbc39c;
+      --toxic-green: #8d9c3a;
+      --glow-green: #c0d355;
+      --entity-red: #ff3838;
+      --black: #0c0e0b;
+      --dark: #121510;
+      --card: #181c16;
+      --border: rgba(203, 195, 156, 0.08);
+      --text: #e1e7dc;
+      --muted: rgba(225, 231, 220, 0.45);
+      --glitch-yellow: rgba(203, 195, 156, 0.15);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+    }
+
+    /* CRT SCANLINE AND GLITCH OVERLAYS */
+    body::before {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      z-index: 999;
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
+      opacity: 0.2;
+    }
+
+    .vhs-noise {
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.4) 100%);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* SLIDE SYSTEM */
+    .deck { width: 100%; height: 100vh; position: relative; }
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transform: scale(0.98) translateY(10px);
+      overflow: hidden;
+    }
+    .slide.active {
+      opacity: 1; pointer-events: all;
+      transform: scale(1) translateY(0);
+    }
+    .slide.exit {
+      opacity: 0; transform: scale(1.02) translateY(-10px);
+    }
+
+    /* NAV */
+    .nav {
+      position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 20px;
+      z-index: 100;
+      background: rgba(18, 21, 16, 0.85);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      padding: 12px 24px; border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .nav-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 18px;
+      padding: 4px 10px; border-radius: 4px;
+      transition: color 0.2s, background 0.2s;
+      font-family: 'Courier Prime', monospace;
+    }
+    .nav-btn:hover { color: var(--glow-green); background: var(--glitch-yellow); }
+    .slide-counter { font-size: 12px; letter-spacing: 0.12em; color: var(--muted); font-weight: 500; min-width: 65px; text-align: center; font-family: 'Courier Prime', monospace; }
+    .dot-row { display: flex; gap: 6px; }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(225, 231, 220, 0.1); cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .dot.active { background: var(--glow-green); transform: scale(1.3); box-shadow: 0 0 8px var(--glow-green); }
+
+    /* SLIDE 0 — TITLE */
+    .slide-title {
+      background: linear-gradient(rgba(12, 14, 11, 0.75), rgba(12, 14, 11, 0.85)), url('backrooms_title_bg.png');
+      background-size: cover;
+      background-position: center;
+      justify-content: center; align-items: center;
+      text-align: center; padding: 60px;
+    }
+    .slide-title::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 50%, rgba(141, 156, 58, 0.12) 0%, transparent 70%),
+        radial-gradient(circle at 10% 20%, rgba(255, 56, 56, 0.04) 0%, transparent 40%);
+      pointer-events: none;
+    }
+    .grid-lines {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(203, 195, 156, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(203, 195, 156, 0.015) 1px, transparent 1px);
+      background-size: 50px 50px;
+      mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    }
+    .title-tag {
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--glow-green); font-weight: 700; margin-bottom: 24px;
+      display: inline-block; padding: 6px 18px;
+      border: 1px solid rgba(141, 156, 58, 0.35); border-radius: 4px;
+      background: rgba(141, 156, 58, 0.05);
+      animation: flicker 4s infinite alternate;
+    }
+    .title-main {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(52px, 9vw, 110px);
+      font-weight: 900; line-height: 0.9;
+      letter-spacing: -0.01em;
+      color: #fff;
+      text-shadow: 0 0 40px rgba(141, 156, 58, 0.2);
+    }
+    .title-main em {
+      font-style: italic; color: var(--carpet-yellow);
+      display: block;
+      letter-spacing: -0.03em;
+    }
+    .title-sub {
+      font-size: 16px; color: var(--muted); font-weight: 300;
+      margin-top: 24px; letter-spacing: 0.05em;
+      line-height: 1.6;
+      font-family: 'Courier Prime', monospace;
+    }
+    .title-meta {
+      position: absolute; bottom: 90px; left: 60px; right: 60px;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      border-top: 1px solid rgba(225, 231, 220, 0.1);
+      padding-top: 20px;
+    }
+    .title-meta-item { font-family: 'Courier Prime', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+    .title-meta-item strong { display: block; color: var(--text); font-size: 13px; margin-top: 4px; font-family: 'Outfit', sans-serif; font-weight: 600; }
+    .brand-wordmark { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; letter-spacing: 0.15em; font-weight: 900; color: #fff; }
+    .brand-wordmark span { color: var(--glow-green); }
+
+    /* COMMON SLIDE PARTS */
+    .slide-header {
+      padding: 40px 60px 0;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .slide-number { font-family: 'Courier Prime', monospace; font-size: 12px; letter-spacing: 0.2em; color: var(--glow-green); font-weight: 700; }
+    .slide-label { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+    .slide-body { flex: 1; padding: 20px 60px 100px; display: flex; flex-direction: column; justify-content: center; z-index: 10; }
+    .section-headline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(34px, 4.5vw, 64px);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+    .section-headline .accent { color: var(--carpet-yellow); }
+    .section-headline .highlight { color: var(--entity-red); text-shadow: 0 0 15px rgba(255, 56, 56, 0.4); }
+    .body-text { font-size: 16px; line-height: 1.7; color: var(--muted); max-width: 680px; }
+    .body-text strong { color: var(--text); }
+
+    /* GRID / CARDS SYSTEM */
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 28px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+    
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 28px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, background-color 0.3s;
+    }
+    .card:hover { border-color: rgba(141, 156, 58, 0.3); transform: translateY(-3px); background: rgba(24, 28, 22, 0.9); }
+    .card::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(203, 195, 156, 0.03) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .card-meta { font-family: 'Courier Prime', monospace; font-size: 11px; letter-spacing: 0.15em; font-weight: 700; color: var(--glow-green); margin-bottom: 12px; }
+    .card-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 10px; line-height: 1.25; }
+    .card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* FLICKER KEYFRAME */
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+      }
+      20%, 24%, 55% {
+        opacity: 0.7;
+      }
+    }
+
+    /* SLIDE-SPECIFIC CUSTOM STYLING */
+    
+    /* SLIDE 1: ONE-LINER */
+    .slide-concept { background: var(--dark); }
+    .one-liner-box {
+      border-left: 3px solid var(--glow-green);
+      padding-left: 24px;
+      margin: 28px 0;
+    }
+    .one-liner {
+      font-size: clamp(22px, 3vw, 36px);
+      font-weight: 600;
+      line-height: 1.3;
+      color: #fff;
+    }
+    .one-liner em {
+      color: var(--glow-green);
+      font-style: normal;
+    }
+
+    /* SLIDE 2: THE BACKROOMS TAIWAN */
+    .slide-backrooms { background: var(--black); }
+    .taiwan-points { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
+    .t-point { display: flex; gap: 20px; align-items: flex-start; }
+    .t-icon { font-family: 'Courier Prime', monospace; color: var(--glow-green); font-weight: 700; font-size: 14px; padding-top: 3px; }
+    .t-content { flex: 1; }
+    .t-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .t-desc { font-size: 13px; color: var(--muted); }
+
+    /* SLIDE 3: THE GAMEPLAY SCALE */
+    .slide-gameplay {
+      background: linear-gradient(rgba(12, 14, 11, 0.85), rgba(12, 14, 11, 0.75)), url('vr_arena_backdrop.png');
+      background-size: cover;
+      background-position: center;
+    }
+    
+    /* SLIDE 5: VISUAL MOODBOARD */
+    .slide-moodboard { background: var(--black); }
+    .mood-grid {
+      display: grid; grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 16px; margin-top: 24px; height: 350px;
+    }
+    .mood-cell {
+      border-radius: 8px; overflow: hidden;
+      position: relative;
+      background: var(--card); border: 1px solid var(--border);
+    }
+    .mood-cell img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; display: block; transition: opacity 0.3s, transform 0.5s; }
+    .mood-cell:hover img { opacity: 1; transform: scale(1.03); }
+    .mood-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 16px; font-size: 11px; letter-spacing: 0.1em;
+      font-weight: 600; text-transform: uppercase; color: var(--text);
+      background: linear-gradient(transparent, rgba(12,14,11,0.95));
+      font-family: 'Courier Prime', monospace;
+    }
+    .mood-cell-label { font-size: 10px; color: var(--glow-green); letter-spacing: 0.2em; font-weight: 700; margin-bottom: 2px; }
+
+    /* SLIDE 6: BUSINESS IMPACT & SELLING POINTS */
+    .slide-business {
+      background: linear-gradient(rgba(12, 14, 11, 0.85), rgba(12, 14, 11, 0.75)), url('lbe_queue_entrance.png');
+      background-size: cover;
+      background-position: center;
+    }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 28px; }
+    .metric-card {
+      background: rgba(24, 28, 22, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 24px; text-align: center;
+    }
+    .metric-big {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900;
+      color: var(--glow-green); line-height: 1;
+      margin-bottom: 8px;
+    }
+    .metric-label { font-size: 12px; color: var(--muted); line-height: 1.4; font-family: 'Courier Prime', monospace; }
+
+    /* SLIDE 7: CLOSE */
+    .slide-close {
+      background: linear-gradient(rgba(12, 14, 11, 0.8), rgba(12, 14, 11, 0.9)), url('backrooms_entity_creature_1783957450532.png');
+      background-size: cover;
+      background-position: center;
+      justify-content: center; align-items: center; text-align: center;
+    }
+    .slide-close::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255, 56, 56, 0.08) 0%, transparent 65%),
+        radial-gradient(circle at 50% 100%, rgba(141, 156, 58, 0.1) 0%, transparent 60%);
+    }
+    .close-content { position: relative; z-index: 10; max-width: 800px; }
+    .close-headline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(40px, 7vw, 90px);
+      font-weight: 900; line-height: 0.95; color: #fff;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+    .close-headline em { color: var(--entity-red); font-style: normal; text-shadow: 0 0 20px rgba(255,56,56,0.3); }
+    .close-tagline {
+      font-family: 'Courier Prime', monospace;
+      font-size: 13px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--glow-green); font-weight: 700;
+    }
+    .close-brand {
+      font-size: 12px; letter-spacing: 0.2em; color: var(--muted);
+      margin-top: 14px; font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    /* KEY PRESS HINT */
+    .key-hint {
+      position: fixed; top: 20px; right: 24px;
+      font-size: 10px; letter-spacing: 0.15em; color: var(--muted);
+      display: flex; gap: 8px; align-items: center; z-index: 100;
+      font-family: 'Courier Prime', monospace;
+    }
+    .key { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; }
+
+    /* PROGRESS BAR */
+    .progress {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: var(--glow-green);
+      transition: width 0.5s ease;
+      z-index: 200;
+      box-shadow: 0 0 10px var(--glow-green);
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="vhs-noise"></div>
+<div class="key-hint"><span class="key">←</span><span class="key">→</span> keys to scan</div>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 0: TITLE -->
+  <div class="slide slide-title active" data-slide="0">
+    <div class="grid-lines"></div>
+    <div style="position:relative;z-index:10;">
+      <div class="title-tag">MOONDREAM REALITY · CREATIVE PITCH</div>
+      <div class="title-main">PROJECT:<em>NOCLIP TAIWAN</em></div>
+      <p class="title-sub">Massive Multiplayer Location-Based VR Horror Experience<br>Prepared by Moondream Reality Creative Team</p>
+    </div>
+    <div class="title-meta">
+      <div>
+        <div class="title-meta-item">PROJECT TYPE</div>
+        <div class="title-meta-item"><strong>100-Player VR LBE</strong></div>
+      </div>
+      <div style="text-align:center;">
+        <div class="title-meta-item">GENRE</div>
+        <div class="title-meta-item"><strong>Thriller / Atmospheric Horror</strong></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="brand-wordmark">MOONDREAM<span>REALITY</span></div>
+        <div class="title-meta-item" style="margin-top:4px;">Pitch Brainstorming</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: CORE CONCEPT -->
+  <div class="slide slide-concept" data-slide="1">
+    <div class="slide-header">
+      <div><div class="slide-number">01</div><div class="slide-label">The Hook</div></div>
+      <div class="brand-wordmark">MOONDREAM<span>REALITY</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="section-headline">Noclip Out of Reality.<br>Wake up in the <span class="accent">Uncanny Valley.</span></div>
+      <p class="body-text">We take the viral internet sensation of the <strong>"Backrooms"</strong>—with over a billion YouTube views—and ground it in the eerie, humid reality of Taiwanese liminal spaces. It is no longer just a solo found-footage video; it is a <strong>shared survival event</strong>.</p>
+      
+      <div class="one-liner-box">
+        <div class="one-liner">
+          "A 100-player simultaneous VR escape through the yellow-tinted, endless maze of a <em>corrupted, nostalgic Taiwan</em>."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: TAGLINE & VR HORROR -->
+  <div class="slide slide-concept" data-slide="2" style="background: linear-gradient(rgba(12, 14, 11, 0.85), rgba(12, 14, 11, 0.75)), url('taiwan_street_night.png'); background-size: cover; background-position: center; justify-content: center; align-items: center; text-align: center;">
+    <div class="slide-header" style="position:absolute;top:40px;left:60px;right:60px;">
+      <div><div class="slide-number">02</div><div class="slide-label">The Core Experience</div></div>
+      <div class="brand-wordmark">MOONDREAM<span>REALITY</span></div>
+    </div>
+    <div style="max-width: 900px; padding: 0 40px; position: relative; z-index: 10;">
+      <div class="title-tag" style="border-color: rgba(255,56,56,0.35); color: var(--entity-red); background: rgba(255,56,56,0.05); animation: flicker 4s infinite alternate;">THE PIVOTAL PHRASE</div>
+      <div class="section-headline" style="font-size: clamp(38px, 6vw, 80px); margin-bottom: 24px;">
+        FAMILIAR STREETS.<br><span class="highlight" style="color: var(--entity-red); text-shadow: 0 0 30px rgba(255,56,56,0.5); font-style: italic;">UNFAMILIAR ENDINGS.</span>
+      </div>
+      <p class="body-text" style="font-size: 18px; margin: 0 auto; line-height: 1.8; color: var(--text);">
+        Step into the uncanny replica of Taiwan's quietest night alleys and MRT corridors. This is not a passive exploration—it is a high-tension multiplayer survival thriller. Experience the absolute horror of hearing the Entity's distorted footsteps drawing closer in immersive VR, knowing that one wrong step in the physical arena means you are discovered.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: THE SETTING -->
+  <div class="slide slide-backrooms" data-slide="3">
+    <div class="slide-header">
+      <div><div class="slide-number">03</div><div class="slide-label">Taiwanese Liminal Space</div></div>
+      <div class="brand-wordmark">MOONDREAM<span>REALITY</span></div>
+    </div>
+    <div class="slide-body">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; width: 100%;">
+        <!-- LEFT: Original text content centered vertically -->
+        <div>
+          <div class="section-headline">A Nostalgic, <span class="accent">Familiar Nightmare</span></div>
+          <p class="body-text" style="margin-bottom: 20px;">Instead of generic office spaces, players wander through architectural artifacts unique to Taiwan, evoking a powerful sense of modern folklore and isolation:</p>
+          
+          <div class="taiwan-points">
+            <div class="t-point">
+              <div class="t-icon">[01]</div>
+              <div class="t-content">
+                <div class="t-title">Retro Green-Tiled MRT Corridors</div>
+                <div class="t-desc">Endless underground hallways lined with faded public posters, flickering route maps, and the distant drip of humid water.</div>
+              </div>
+            </div>
+            <div class="t-point">
+              <div class="t-icon">[02]</div>
+              <div class="t-content">
+                <div class="t-title">The Midnight Convenience Store Loop</div>
+                <div class="t-desc">A perfect replica of a standard 24/7 store, empty of products, with the chime sound looping on a broken glitch cycle.</div>
+              </div>
+            </div>
+            <div class="t-point">
+              <div class="t-icon">[03]</div>
+              <div class="t-content">
+                <div class="t-title">Red-Lantern Alleyways in Concrete</div>
+                <div class="t-desc">Narrow residential streets with metal rolling doors, overgrown banyan tree roots breaking through drywall, lit by solitary crimson temples.</div>
+              </div>
+            </div>
+            <div class="t-point">
+              <div class="t-icon">[04]</div>
+              <div class="t-content">
+                <div class="t-title">Flickering Wards in Empty Hospitals</div>
+                <div class="t-desc">Rusted wheelchairs abandoned in corridors lined with peeling green public hospital paint, under fluorescent tubes pulsing like a slow heartbeat.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- RIGHT: Reference images with fixed height to prevent collapse -->
+        <div style="display: flex; flex-direction: column; gap: 8px; height: 440px; width: 100%;">
+          <div style="flex: 1; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid var(--border);">
+            <img src="mrt_corridor.png" alt="MRT Corridor" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85;" />
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 6px 10px; background: linear-gradient(transparent, rgba(12,14,11,0.95)); font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--glow-green); font-weight: 700;">01 // MRT CORRIDORS</div>
+          </div>
+          <div style="flex: 1; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid var(--border);">
+            <img src="convenience_store.png" alt="Convenience Store" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85;" />
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 6px 10px; background: linear-gradient(transparent, rgba(12,14,11,0.95)); font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--glow-green); font-weight: 700;">02 // CONVENIENCE STORE</div>
+          </div>
+          <div style="flex: 1; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid var(--border);">
+            <img src="red_lantern_alley.png" alt="Red Lantern Alleyway" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85;" />
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 6px 10px; background: linear-gradient(transparent, rgba(12,14,11,0.95)); font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--glow-green); font-weight: 700;">03 // RED-LANTERN ALLEY</div>
+          </div>
+          <div style="flex: 1; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid var(--border);">
+            <img src="hospital_corridor.png" alt="Empty Hospital" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85;" />
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 6px 10px; background: linear-gradient(transparent, rgba(12,14,11,0.95)); font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--glow-green); font-weight: 700;">04 // EMPTY HOSPITAL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: GAMEPLAY MECHANICS & SCALE -->
+  <div class="slide slide-gameplay" data-slide="4">
+    <div class="slide-header">
+      <div><div class="slide-number">04</div><div class="slide-label">The Tech &amp; Experience</div></div>
+      <div class="brand-wordmark">MOONDREAM<span>REALITY</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="section-headline">100 Players. <span class="accent">10x30 Meters.</span> <span class="highlight">True Scale.</span></div>
+      <p class="body-text">We leverage colossal Location-Based VR (LBE) to create a physically real multiplayer sandbox. Players move freely in the physical space while exploring miles of virtual corridors.</p>
+      
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-meta">PHYSICAL SPACE</div>
+          <div class="card-title">10x30m Arena</div>
+          <div class="card-desc">Designed with dynamic physical partitions matching virtual walls, enabling tactile feedback and safe, high-density exploration.</div>
+        </div>
+        <div class="card">
+          <div class="card-meta">SOCIAL PANIC</div>
+          <div class="card-title">100-Player Unity</div>
+          <div class="card-desc">Proximity voice chat lets players hear distant screams or organize panic huddles. Mass hysteria becomes a gameplay mechanic.</div>
+        </div>
+        <div class="card">
+          <div class="card-meta">THE MONSTER</div>
+          <div class="card-title">Dynamic Entity AI</div>
+          <div class="card-desc">The Entity hunts using sound and visual light detection. It is fast, faceless, and thrives on splitting groups apart.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: THE SELLING POINTS -->
+  <div class="slide slide-concept" data-slide="5">
+    <div class="slide-header">
+      <div><div class="slide-number">05</div><div class="slide-label">Selling the Ideas</div></div>
+      <div class="brand-wordmark">MOONDREAM<span>REALITY</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="section-headline">Why Players <span class="accent">Will Queue</span> For This</div>
+      
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-meta">USP A</div>
+          <div class="card-title">Social-Horror Spectacle</div>
+          <div class="card-desc">Most VR horror is a lonely, isolated experience. This is a massive survival social experiment where your best chance of survival is using your group as sound-decoys or coordinate distractions.</div>
+        </div>
+        <div class="card">
+          <div class="card-meta">USP B</div>
+          <div class="card-title">Tactile &amp; Visual Realism</div>
+          <div class="card-desc">Utilizing photorealistic assets of local Taiwanese architecture combined with industrial-grade haptic flooring and wind/humidity emitters to blur the line of digital and physical space.</div>
+        </div>
+        <div class="card">
+          <div class="card-meta">USP C</div>
+          <div class="card-title">The "YouTube Sensationalism" Loop</div>
+          <div class="card-desc">Integrating a "Spectator Mode" where content creators outside the arena can control the environment, toggle lights, or trigger entities, driving massive online streamability and viral loops.</div>
+        </div>
+        <div class="card">
+          <div class="card-meta">USP D</div>
+          <div class="card-title">High Replayability</div>
+          <div class="card-desc">The layout of the liminal maze shifts dynamically based on group choices and performance, ensuring that no two runs of the Backrooms are identical.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: VISUAL MOODBOARD -->
+  <div class="slide slide-moodboard" data-slide="6">
+    <div class="slide-header">
+      <div><div class="slide-number">06</div><div class="slide-label">Art Direction Moodboard</div></div>
+      <div class="brand-wordmark">MOONDREAM<span>REALITY</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="section-headline">The Visual <span class="accent">Tone &amp; Atmosphere</span></div>
+      
+      <div class="mood-grid">
+        <div class="mood-cell">
+          <img src="backrooms_liminal_corridor_1783957433832.png" alt="Liminal Corridor" />
+          <div class="mood-caption">
+            <div class="mood-cell-label">01 // THE ATMOSPHERE</div>
+            Fluorescent Isolation
+          </div>
+        </div>
+        <div class="mood-cell">
+          <img src="backrooms_vr_multiplayer_1783957441620.png" alt="VR Multiplayer Concept" />
+          <div class="mood-caption">
+            <div class="mood-cell-label">02 // THE CO-OP</div>
+            100-Player Panic Sandbox
+          </div>
+        </div>
+        <div class="mood-cell">
+          <img src="backrooms_entity_creature_1783957450532.png" alt="The Entity" />
+          <div class="mood-caption">
+            <div class="mood-cell-label">03 // THE THREAT</div>
+            Flickering Entity AI
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: REPLAYABILITY & ENDINGS -->
+  <div class="slide slide-concept" data-slide="7" style="background: linear-gradient(rgba(12, 14, 11, 0.85), rgba(12, 14, 11, 0.95)), url('branching_flowchart.png'); background-size: cover; background-position: center; align-items: center; justify-content: center;">
+    <div class="slide-header" style="position:absolute;top:40px;left:60px;right:60px;">
+      <div><div class="slide-number">07</div><div class="slide-label">Branching Realities</div></div>
+      <div class="brand-wordmark">MOONDREAM<span>REALITY</span></div>
+    </div>
+    <div style="max-width: 900px; padding: 0 40px; position: relative; z-index: 10; text-align: center;">
+      <div class="title-tag" style="border-color: rgba(0, 180, 216, 0.35); color: #00b4d8; background: rgba(0, 180, 216, 0.05);">DYNAMIC STORYTELLING</div>
+      <div class="section-headline" style="font-size: clamp(34px, 5.5vw, 76px); margin-bottom: 20px;">
+        FAMILIAR STREETS.<br><span class="highlight" style="color: #00b4d8; text-shadow: 0 0 30px rgba(0, 180, 216, 0.5);">INFINITE VARIATIONS.</span>
+      </div>
+      <p class="body-text" style="font-size: 16px; margin: 0 auto 30px; line-height: 1.8; color: var(--text); max-width: 750px;">
+        To drive repeat play rate (a critical metric for LBE profitability), players' actions and failures branch the physical maze in real-time. No two runs are identical, leading players to navigate completely different spaces depending on who they save, what doors they unlock, and how they evade the Entity.
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+        <div class="card" style="background: rgba(12, 14, 11, 0.85); border: 1px solid rgba(0, 180, 216, 0.3); text-align: left; padding: 18px;">
+          <div style="font-family: 'Courier Prime', monospace; font-size: 11px; color: #00b4d8; margin-bottom: 8px;">PATHWAY 01 // COWARDICE</div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px;">The Sacrificial Route</div>
+          <div style="font-size: 12px; color: var(--muted); line-height: 1.5;">Sacrificing team members to the Entity unlocks shortcut fire escapes, leading to an early, tragic ending.</div>
+        </div>
+        <div class="card" style="background: rgba(12, 14, 11, 0.85); border: 1px solid rgba(0, 180, 216, 0.3); text-align: left; padding: 18px;">
+          <div style="font-family: 'Courier Prime', monospace; font-size: 11px; color: #00b4d8; margin-bottom: 8px;">PATHWAY 02 // LOGIC</div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px;">The Facility Breach</div>
+          <div style="font-size: 12px; color: var(--muted); line-height: 1.5;">Deciphering MRT flickering terminal codes reveals hidden utility elevators, unlocking the underground laboratory sector.</div>
+        </div>
+        <div class="card" style="background: rgba(12, 14, 11, 0.85); border: 1px solid rgba(0, 180, 216, 0.3); text-align: left; padding: 18px;">
+          <div style="font-family: 'Courier Prime', monospace; font-size: 11px; color: #00b4d8; margin-bottom: 8px;">PATHWAY 03 // HEROISM</div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px;">The Noclip Exit</div>
+          <div style="font-size: 12px; color: var(--muted); line-height: 1.5;">Reaching the temples together under red light unlocks the fabled 'Noclip' glitch exit back to the real Taiwan.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: BUSINESS IMPACT -->
+  <div class="slide slide-business" data-slide="8">
+    <div class="slide-header">
+      <div><div class="slide-number">08</div><div class="slide-label">Business &amp; Reach</div></div>
+      <div class="brand-wordmark">MOONDREAM<span>REALITY</span></div>
+    </div>
+    <div class="slide-body">
+      <div class="section-headline">A High-Yield <span class="accent">LBE Experience</span></div>
+      <p class="body-text">By targetting the Gen-Z and Millennial horror demographic, the project combines high throughput, viral online content, and regional IP potential.</p>
+      
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-big">100+</div>
+          <div class="metric-label">Hourly Throughput Per Arena</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-big">40%</div>
+          <div class="metric-label">Repeat Play Rate (Procedural Layout)</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-big">1.2B</div>
+          <div class="metric-label">Organic Backrooms Traffic (Views)</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-big">3.5x</div>
+          <div class="metric-label">ROI vs. traditional escape rooms</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: CLOSE -->
+  <div class="slide slide-close" data-slide="9">
+    <div class="slide-header" style="position:absolute;top:40px;left:60px;right:60px;">
+      <div></div>
+      <div class="brand-wordmark">MOONDREAM<span>REALITY</span></div>
+    </div>
+    <div class="close-content">
+      <div class="close-headline">
+        Can you survive<br>the <em>unseen</em>?
+      </div>
+      <div class="close-tagline">PROJECT: NOCLIP TAIWAN</div>
+      <div class="close-brand">Moondream Reality Creative Team · 2026</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn" id="prevBtn" onclick="prevSlide()">← PREV</button>
+  <div class="dot-row" id="dotRow"></div>
+  <div class="slide-counter" id="counter">1 / 10</div>
+  <button class="nav-btn" id="nextBtn" onclick="nextSlide()">NEXT →</button>
+</nav>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  const dotRow = document.getElementById('dotRow');
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotRow.appendChild(d);
+  });
+
+  function updateUI() {
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    counter.textContent = `${current + 1} / ${total}`;
+    progress.style.width = `${((current + 1) / total) * 100}%`;
+  }
+
+  function goTo(n) {
+    if (n < 0 || n >= total) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit');
+    setTimeout(() => { slides[current].classList.remove('exit'); }, 600);
+    current = n;
+    slides[current].classList.add('active');
+    updateUI();
+  }
+
+  function nextSlide() { goTo(current + 1); }
+  function prevSlide() { goTo(current - 1); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+
+  updateUI();
+</script>
+</body>
+</html>
